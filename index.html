@@ -4,8 +4,10 @@
 	</head>
 	<body>
 		<div class="sidebar">
+			<div class="portrait">
+				<img src="profilePic.jpeg" alt="Profile Picture">
+			</div>
 			<h1>Winston Riggs</h1>
-			<img src="profilePic.jpeg" alt="Profile Picture">
 			<a href="https://github.com/wriggs12" target="blank">GitHub</a>
 			<a href="https://www.linkedin.com/in/winstonriggs/" target="blank">LinkedIn</a>
 		</div>
@@ -26,16 +28,16 @@
 			font-family: sans-serif;
 			background: #008080;
 			text-decoration: none;
-        		color: white;
-        		border-radius: 2em;
-        		padding: 1em;
-        		display: block;
-        		text-align: center;
-        		font-size: 16px;
-        		margin-bottom: 20px;
-        		margin-right: auto;
-        		margin-left: auto;
-        		width: 50%;
+        	color: white;
+        	border-radius: 2em;
+        	padding: 1em;
+        	display: block;
+        	text-align: center;
+        	font-size: 16px;
+        	margin-bottom: 20px;
+        	margin-right: auto;
+        	margin-left: auto;
+        	width: 50%;
 			border: 2px solid #008080;
 		}
 		.sidebar a:hover {
@@ -43,14 +45,20 @@
 			background-color: #FFFFFF;
 			color: #000000;
 		}
-		.sidebar img {
-			width: 50%;
+		.portrait {
+			position: relative;
+  			width: 175px;
+ 			height: 175px;
+ 			overflow: hidden;
+			box-shadow: 0px 6px 5px #ccc;
+  			border-radius: 50%;
+  			margin-left: auto;
+  			margin-right: auto;
+  			margin-top: 20px;
+		}
+		.portrait img {
+			width: 100%;
 			height: auto;
-			display: block;
-			border-radius: 3em;
-			margin-right: auto;
-        		margin-left: auto;
-        		margin-bottom: 20px;
 		}
 	</style>
 </html>
