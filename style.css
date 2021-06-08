@@ -18,16 +18,16 @@
 	font-family: sans-serif;
 	background: #008080;
 	text-decoration: none;
-    	color: white;
-    	border-radius: 2em;
-    	padding: 1em;
-    	display: block;
-    	text-align: center;
-    	font-size: 16px;
-    	margin-bottom: 20px;
-    	margin-right: auto;
-    	margin-left: auto;
-    	width: 50%;
+    color: white;
+    border-radius: 2em;
+    padding: 1em;
+    display: block;
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 20px;
+    margin-right: auto;
+    margin-left: auto;
+    width: 50%;
 	border: 2px solid #008080;
 }
 .sidebar a:hover {
