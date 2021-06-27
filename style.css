@@ -114,3 +114,15 @@
 .header a:hover {
 	background-color: #008080;
 }
+
+.projects {
+	margin-left: 245px;
+	margin-top: 75px;
+}
+.proj {
+	text-align: center;
+	padding: 50px;
+	border: 2px solid black;
+	padding-top: 0px;
+	padding-bottom: 75px;
+}
