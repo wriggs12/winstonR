@@ -27,7 +27,7 @@
 	padding: 0px 5px;
 }
 
-.sidebar a {
+#link {
 	font-family: sans-serif;
 	background: #008080;
 	text-decoration: none;
@@ -44,10 +44,22 @@
 	border: 2px solid #008080;
 }
 
-.sidebar a:hover {
+#link a:hover {
 	border: 2px solid #008080;
 	background-color: #FFFFFF;
 	color: #000000;
+}
+
+#email {
+	display: block;
+	margin-right: auto;
+  margin-left: auto;
+  text-align: center;
+  text-decoration: none;
+  color: #0048BE;
+  font-family: sans-serif;
+  font-size: 17px;
+  padding: 1em;
 }
 
 .topbar {
@@ -116,13 +128,22 @@
 }
 
 .projects {
+	position: relative;
 	margin-left: 245px;
-	margin-top: 75px;
+	margin-top: 65px;
 }
-.proj {
-	text-align: center;
-	padding: 50px;
-	border: 2px solid black;
-	padding-top: 0px;
-	padding-bottom: 75px;
+
+.showcase {
+	margin: 10px;
+	height: 175px;
+	box-shadow: rgba(0,0,0,0.4) 0px 2px 7px;
+	border-radius: 5px;
+	padding: 10px;
+	margin-bottom: 15px;
+}
+
+.title {
+	font-size: 25px;
+	font-family: sans-serif;
+	display: block;
 }
