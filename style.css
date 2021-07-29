@@ -135,7 +135,7 @@
 
 .showcase {
 	margin: 10px;
-	height: 175px;
+	height: 190px;
 	box-shadow: rgba(0,0,0,0.4) 0px 2px 7px;
 	border-radius: 5px;
 	padding: 10px;
@@ -146,4 +146,25 @@
 	font-size: 25px;
 	font-family: sans-serif;
 	display: block;
+}
+
+.text {
+	display: block;
+	margin-top: 15px;
+	font-size: 18px;
+}
+
+#linkProj {
+	font-family: sans-serif;
+	background: #008080;
+	text-decoration: none;
+  color: white;
+  border-radius: 2em;
+  padding: 1em;
+  display: block;
+  text-align: center;
+  font-size: 16px;
+  margin-top: 15px;
+  width: 100px;
+	border: 2px solid #008080;
 }
