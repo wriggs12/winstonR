@@ -408,7 +408,7 @@ textarea.form-control {
 /* /form */
 /* card */
 .card {
-  border: 0;
+  border: 1;
 }
 
 .card-header {
