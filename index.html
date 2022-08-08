@@ -1,267 +1,240 @@
 <!DOCTYPE html>
-<html lang="zxx">
-
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Winston Riggs | Portfolio</title>
-
-  <!-- mobile responsive meta -->
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <!-- ** Plugins Needed for the Project ** -->
-  <!-- Bootstrap -->
-  <link rel="stylesheet" href="plugins/bootstrap/bootstrap.min.css">
-  <!-- slick slider -->
-  <link rel="stylesheet" href="plugins/slick/slick.css">
-  <!-- themefy-icon -->
-  <link rel="stylesheet" href="plugins/themify-icons/themify-icons.css">
-
-  <!-- Main Stylesheet -->
-  <link href="css/style.css" rel="stylesheet">
-  
-  <!--Favicon-->
-  <link rel="shortcut icon" type="image/jpg" href="./images/favicons/favicon.ico"/>
-  <link rel="icon" href="./images/favicons/favicon.ico" type="image/x-icon">
-  <link rel=”apple-touch-icon” href=”./images/favicons/apple-touch-icon.png” />
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Winston Riggs- Software Engineer</title>
+    <meta name="description" content="A Software Engineer passionate about creating anything and everything especially when analyzing data." />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,500;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.lineicons.com/2.0/LineIcons.css">
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
 </head>
 
 <body>
-
-<!-- hero area -->
-<section class="hero-area bg-primary" id="parallax">
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-11 mx-auto">
-        <h1 class="text-white font-tertiary">Winston Riggs <br> Aspiring Software Engineer</h1>
-      </div>
+  <!-- Mobile menu button -->
+  <div id="home" class="visuallyHidden"></div>
+  <div class="menuButton" id="menuButton" tabindex=0>
+    <div class="linesContainer">
+      <span></span>
     </div>
   </div>
-  <div class="layer-bg w-100">
-    <img class="img-fluid w-100" src="images/illustrations/leaf-bg.png" alt="bg-shape">
-  </div>
-  <div class="layer" id="l2">
-    <img src="images/illustrations/dots-cyan.png" alt="bg-shape">
-  </div>
-  <div class="layer" id="l3">
-    <img src="images/illustrations/leaf-orange.png" alt="bg-shape">
-  </div>
-  <div class="layer" id="l4">
-    <img src="images/illustrations/dots-orange.png" alt="bg-shape">
-  </div>
-  <div class="layer" id="l5">
-    <img src="images/illustrations/leaf-yellow.png" alt="bg-shape">
-  </div>
-  <div class="layer" id="l6">
-    <img src="images/illustrations/leaf-cyan.png" alt="bg-shape">
-  </div>
-  <div class="layer" id="l7">
-    <img src="images/illustrations/dots-group-orange.png" alt="bg-shape">
-  </div>
-  <div class="layer" id="l8">
-    <img src="images/illustrations/leaf-pink-round.png" alt="bg-shape">
-  </div>
-  <div class="layer" id="l9">
-    <img src="images/illustrations/leaf-cyan-2.png" alt="bg-shape">
-  </div>
-  <!-- social icon -->
-  <ul class="list-unstyled ml-5 mt-3 position-relative zindex-1">
-    <li class="mb-3"><a class="text-white" href="https://www.linkedin.com/in/winstonriggs/" target="_blank"><i class="ti-linkedin"></i></a></li>
-    <li class="mb-3"><a class="text-white" href="https://github.com/wriggs12" target="_blank"><i class="ti-github"></i></a></li>
-  </ul>
-  <!-- /social icon -->
-</section>
-<!-- /hero area -->
+  <!-- Side menu -->
+  <aside class="sideMenu sideMenuShow" id="sideMenu"> 
+    <p class="logo">WR</p>
 
-<!-- about -->
-<section class="section">
-  <div class="container" id="about">
-    <div class="row">
-      <div class="col-lg-10 mx-auto text-center">
-        <p class="font-secondary paragraph-lg text-dark">Hi, my name is Winston Riggs and I'm an aspiring software engineer in NYC. I am currently a sophomore at Hunter College studying computer science and mathematics. I'm interested in machine learning, data analytics, and finance. I'm currently looking for a summer 2022 software engineering internship.</p>
-      </div>
+    <nav>
+      <ul class="navBar">
+        <li class="homeNav">
+          <a href="#home" class="navItem">
+            <i class="lni lni-home"></i>
+            <span class="navItemName">HOME</span>
+          </a>
+        </li>
+        <li class="aboutNav">
+          <a href="#about" class="navItem">
+            <i class="lni lni-user"></i>
+            <span class="navItemName">ABOUT</span>
+          </a>
+        </li>
+        <li class="skillsNav">
+          <a href="#skills" class="navItem">
+            <i class="lni lni-code-alt"></i>
+            <span class="navItemName">SKILLS</span>
+          </a>
+        </li>
+        <li class="worksNav">
+          <a href="#works" class="navItem">
+            <i class="lni lni-briefcase"></i>
+            <span class="navItemName">PROJECTS</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!--Beginning of the wrapper -->
+  <div class="outerWrapper"> 
+    <div class="innerWrapper">
+      <!-- Header -->
+      <header>
+        <div class="heroDescription">
+          <p class="greeting">HI THERE! I'M</p>
+          <h1><span>Winston</span> Riggs</h1>
+          <p class="smallBio">A <span>Computer Science Student</span> at Stony Brook University passionate about data analytics and the potential impact of the insights.</p>
+          <div class="socialsResume">
+            <ul class="socialsList">
+              <li>
+                <a href="https://www.linkedin.com/in/winstonriggs/" target="_blank" rel="noopener noreferrer"><i class="lni lni-linkedin-original" aria-label="Link to Alex's LinkedIn page."></i></a>
+              </li>
+              <li>
+                <a href="https://github.com/wriggs12" target="_blank" rel="noopener noreferrer"><i class="lni lni-github-original" aria-label="Link to Alex's GitHub page."></i></a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <!-- Beginning of Main -->
+      <main>
+        <!-- About Section -->
+        <section class="aboutSection" id="about">
+          <div class="sectionHead">
+            <h2>ABOUT ME</h2>
+          </div>
+          
+          <article class="aboutContainer sectionContainer">
+            <p>I'm a Junior at <span>Stony Brook University</span> studying <span>Computer Science</span> with a minor in <span>Mathematics</span>. I am passionate about machine learning, data analytics, and system design.</p>
+          </article>
+        </section>
+
+        <!-- Skills Section -->
+        <section class="skillsSection" id="skills">
+          <div class="sectionHead">
+            <h2>SKILLS</h2>
+          </div>
+        
+          <div class="skillsContainer sectionContainer">
+            <ul class="skillsGrid">
+              <li>
+                <div class="itemContainer">
+                  <img src="assets/images/cpp.png">
+                  <p>C++</p>
+                </div>
+              </li>
+              <li>
+                <div class="itemContainer">
+                  <img src="assets/images/python.png">
+                  <p>Python</p>
+                </div>
+              </li>
+              <li>
+                <div class="itemContainer">
+                  <img src="assets/images/java.webp">
+                  <p>Java</p>
+                </div>
+              </li>
+              <li>
+                <div class="itemContainer">
+                  <img src="assets/images/git.png">
+                  <p>Git</p>
+                </div>
+              </li>
+              <li>
+                <div class="itemContainer">
+                  <img src="assets/images/docker.webp">
+                  <p>Docker</p>
+                </div>
+              </li>
+              <li>
+                <div class="itemContainer">
+                  <img src="assets/images/react.png">
+                  <p>React</p>
+                </div>
+              </li>
+              <li>
+                <div class="itemContainer">
+                  <img src="assets/images/flask.png">
+                  <p>Flask</p>
+                </div>
+              </li>
+              <li>
+                <div class="itemContainer">
+                  <img src="assets/images/sql.jpg">
+                  <p>SQL</p>
+                </div>
+              </li>
+              <li>
+                <div class="itemContainer">
+                  <img src="assets/images/bash.png">
+                  <p>Bash</p>
+                </div>
+              </li>
+              <li>
+                <div class="itemContainer">
+                  <img src="assets/images/scikit.png">
+                  <p>Scikit</p>
+                </div>
+              </li>
+              <li>
+                <div class="itemContainer">
+                  <img src="assets/images/mongodb.png">
+                  <p>MongoDB</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- Works Section -->
+        <section class="worksSection" id="works">
+          <div class="sectionHead">
+            <h2>PROJECTS</h2>
+          </div>
+
+          <div class="worksContainer sectionContainer">
+
+            <article class="workBox">
+              <div class="workImageContainer">
+                <img src="assets/images/fin-ai.png" alt="FinancialAI HackHarvard Logo">
+              </div>
+              <div class="workDescribeContainer">
+                <h3>Financial AI</h3>
+                <h4>Technologies Used: <span class="techStack">React</span>, <span class="techStack">Flask</span>, <span class="techStack">Javascript</span>, <span class="techStack">HTML/CSS</span></h4>
+                <ul>
+                  <li>Developed a web app with React/Flask, to analyze a user’s personal finances and give them recommendations to improve their financial situation</li>
+                  <li>Implemented a K-Means clustering machine learning model to predict annual inflation using data from the Nasdaq API</li>
+                </ul>
+                <div class="workLinks">
+                  <a href="https://financial-ai.herokuapp.com/" class="liveLink" target="_blank" rel="noopener noreferrer">Live</a>
+                  <a href="https://github.com/wriggs12/FinancialAI-HackHarvard" class="repoLink" target="_blank" rel="noopener noreferrer">Repo</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="workBox">
+              <div class="workImageContainer">
+                <img src="assets/images/gameflow.PNG" alt="Stonk.">
+              </div>
+              <div class="workDescribeContainer">
+                <h3>Game Flow AI</h3>
+                <h4>Technologies Used: <span class="techStack">Python</span>, <span class="techStack">sklearn</span>, <span class="techStack">pandas</span>, <span class="techStack">REST API</span></h4>
+                <ul>
+                  <li>Building and training a machine learning model to predict golf tournament outcomes trained and tested on historical data of pro golf tournaments</li>
+                  <li>Building a react/flask UI web-application with a back-end service hosting prediction logic</li>
+                </ul>
+                <div class="workLinks">
+                  <a href="https://www.gameflowai.com/" class="liveLink" target="_blank" rel="noopener noreferrer">Site</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="workBox">
+              <div class="workImageContainer">
+                <img src="assets/images/chess.jpg" alt="Chess Engine Logo.">
+              </div>
+              <div class="workDescribeContainer">
+                <h3>Chess Engine</h3>
+                <h4>Technologies Used: <span class="techStack">C++</span></h4>
+                <ul>
+                  <li>Designing and implementing an original chess engine in C++ that prioritizes quick analysis over move accuracy</li>
+                </ul>
+                <div class="workLinks">
+                  <a href="https://github.com/wriggs12/chess-engine" class="repoLink" target="_blank" rel="noopener noreferrer">Repo</a>
+                </div>
+              </div>
+            </article>
+
+          </div>
+        </section>
+      </main> <!-- End of Main -->
     </div>
-  </div>
-</section>
-<!-- /about -->
-
-<!-- services -->
-<section class="section">
-  <div class="container">
-    <div class="row">
-      <div class="col-12 text-center">
-        <h2 class="section-title">Projects</h2>
-      </div>
-        <div class="col-md-4 mb-4 mb-md-0">
-          <div class="card hover-shadow shadow">
-            <div class="card-body text-center px-4 py-5">
-              <i class="ti-basketball icon mb-5 d-inline-block"></i>
-              <h4 class="mb-4">Game Flow AI</h4>
-              <p>I am currently developing a mobile app that will make predictions on the winners of golf tournaments. I developed a machine learning model to make the predictions in python and a front-end app with ReactJS. The goal is to help betters make more informed decisions.</p>
-              <a href="https://www.gameflowai.com/" target="_blank" id="projLink">View Project</a>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4 mb-4 mb-md-0">
-          <div class="card active-bg-primary hover-shadow shadow">
-            <div class="card-body text-center px-4 py-5">
-              <i class="ti-bar-chart icon mb-5 d-inline-block"></i>
-              <h4 class="mb-4">Huffman Data Compression</h4>
-              <p>Implemented the Huffman Compression algorithm with no loss of data and around 30% compression. Used an inverted binary search tree to implement the algorithm using OOP principles to achieve a running time of O(N log N).</p>
-              <a class="text-white" href="https://github.com/wriggs12/Huffman-Data-Compressor" target="_blank" id="projLink">View Project</a>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4 mb-4 mb-md-0">
-          <div class="card hover-shadow shadow">
-            <div class="card-body text-center px-4 py-5">
-              <i class="ti-panel icon mb-5 d-inline-block"></i>
-              <h4 class="mb-4">Machine Learning Projects</h4>
-              <p>Developed machine learning projects to predict student performances, as well as the type of iris flower, is presented. Used both K Nearest Neighbor and Binary Decision Tree classifiers. Winston is continuing his learning in the field of machine learning.</p>
-              <a href="https://github.com/wriggs12/Machine-Learning-Practice" target="_blank" id="projLink">View Project</a>
-            </div>
-          </div>
-        </div>
-    </div>
-  </div>
-</section>
-<!-- /services -->
-
-<!-- experience -->
-<section class="section">
-  <div class="container">
-    <div class="row justify-content-around">
-      <div class="col-lg-12 text-center">
-        <h2 class="section-title">Experience</h2>
-      </div>
-      <div class="col-lg-3 col-md-4 text-center">
-        <img src="images/experience/icon-1.png" alt="icon">
-        <p class="mb-0">May 2021 - Present</p>
-        <h4>Founder | Software Engineer</h4>
-        <h6 class="text-light">Game Flow AI</h6>
-      </div>
-      <div class="col-lg-3 col-md-4 text-center">
-        <img src="images/experience/icon-2.png" alt="icon">
-        <p class="mb-0">October 2021</p>
-        <h4>Full Stack Developer</h4>
-        <h6 class="text-light">Harvard Hackathon</h6>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- ./experience -->
-
-<!-- education -->
-<section class="section position-relative">
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-12 text-center">
-        <h2 class="section-title">Education</h2>
-      </div>
-      <div class="col-lg-6 col-md-6 mb-80">
-        <div class="d-flex">
-          <div class="mr-lg-5 mr-3">
-            <i class="ti-medall icon icon-light icon-bg bg-white shadow rounded-circle d-block"></i>
-          </div>
-          <div>
-            <p class="text-dark mb-1">2020 - 2024</p>
-            <h4>Bachelors in Computer Science</h4>
-            <p class="mb-0 text-light">CUNY Hunter College (GPA: 3.76)</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- bg image -->
-  <img class="img-fluid edu-bg-image w-100" src="images/backgrounds/education-bg.png" alt="bg-image">
-</section>
-<!-- /education -->
-
-<!-- skills -->
-<section class="section">
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-12 text-center">
-        <h2 class="section-title">Skills</h2>
-      </div>
-      <div class="col-lg-3 col-sm-6 mb-4 mb-lg-0">
-        <div class="card shadow text-center">
-          <div class="position-relative rounded-top progress-wrapper" data-color="#fdb157">
-            <div class="wave" data-progress="90%"></div>
-          </div>
-          <div class="card-footer bg-white">
-            <h4 class="card-title">Java (90%)</h4>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-3 col-sm-6 mb-4 mb-lg-0">
-        <div class="card shadow text-center">
-          <div class="position-relative rounded-top progress-wrapper" data-color="#9473e6">
-            <div class="wave" data-progress="70%"></div>
-          </div>
-          <div class="card-footer bg-white">
-            <h4 class="card-title">Python (70%)</h4>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-3 col-sm-6 mb-4 mb-lg-0">
-        <div class="card shadow text-center">
-          <div class="position-relative rounded-top progress-wrapper" data-color="#bdecf6">
-            <div class="wave" data-progress="60%"></div>
-          </div>
-          <div class="card-footer bg-white">
-            <h4 class="card-title">C++ (60%)</h4>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-3 col-sm-6 mb-4 mb-lg-0">
-        <div class="card shadow text-center">
-          <div class="position-relative rounded-top progress-wrapper" data-color="#ffbcaa">
-            <div class="wave" data-progress="70%"></div>
-          </div>
-          <div class="card-footer bg-white">
-            <h4 class="card-title">Git (70%)</h4>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- /skills -->
-
-<!-- footer -->
-<footer>
-  <div class="section">
-    <div class="container">
-      <div class="row">
-      </div>
-    </div>
-  </div>
-  <div class="border-top text-center border-dark py-5">
-    <h5 class="text-light">Location</h5>
-    <p>New York, NY</p>
-    <h5 class="text-light">Email</h5>
-    <p>wriggs12@gmail.com</p>
-    <p class="mb-0 text-light">Copyright ©<script>
-        var CurrentYear = new Date().getFullYear()
-        document.write(CurrentYear)
-      </script> Winston Riggs</p>
-  </div>
-</footer>
-<!-- /footer -->
-
-<!-- jQuery -->
-<script src="plugins/jQuery/jquery.min.js"></script>
-<!-- Bootstrap JS -->
-<script src="plugins/bootstrap/bootstrap.min.js"></script>
-<!-- slick slider -->
-<script src="plugins/slick/slick.min.js"></script>
-<!-- filter -->
-<script src="plugins/shuffle/shuffle.min.js"></script>
-
-<!-- Main Script -->
-<script src="js/script.js"></script>
-
+    <!-- Footer -->
+    <footer>
+      <p>&copy; Winston Riggs 2022</p>
+    </footer>
+  </div> 
+  <!-- End of the wrapper -->
+  <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="scripts/index.js"></script>
 </body>
 </html>
