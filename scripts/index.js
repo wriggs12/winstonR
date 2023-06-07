@@ -71,6 +71,8 @@ index.init = function() {
   index.eventListeners();
 }
 
+$('#spanYear').html(new Date().getFullYear());
+
 // Document Ready
 $(function() {
   index.init();
