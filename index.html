@@ -1,133 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Winston Riggs - Software Engineer</title>
-    <meta name="description" content="Winston Riggs, A Software Engineer" />
-    <link rel="stylesheet" href="https://cdn.lineicons.com/2.0/LineIcons.css">
-    <link rel="stylesheet" href="styles/styles.css">
-    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+  <title>Winston Riggs - Software Engineer</title>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Winston Riggs, A Software Engineer" />
+  <meta name="author" content="Winston Riggs">
+
+  <link rel="stylesheet" href="styles/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
 </head>
 
 <body>
-  <!-- Mobile menu button -->
-  <div id="home" class="visuallyHidden"></div>
-  <div class="menuButton" id="menuButton" tabindex=0>
-    <div class="linesContainer">
-      <span></span>
+  <header>
+    <div class="header">
+      <div class="logo">
+        <a href="">
+          <span class="logo_text">> 01010111 01010010</span>
+          <span class="logo_cursor"></span>
+        </a>
+      </div>
+      <div class="navbar">
+        <a href="#about">About</a>
+        <a href="#projects">Projects</a>
+        <a class="fa fa-github" style="font-size:24px;" target="_blank" href="https://github.com/wriggs12"></a>
+        <a class="fa fa-linkedin" style="font-size:24px;" target="_blank" href="https://www.linkedin.com/in/winstonriggs/"></a>
+      </div>
     </div>
-  </div>
-  <!-- Side menu -->
-  <aside class="sideMenu sideMenuShow" id="sideMenu"> 
-    <p class="logo">WR</p>
-
-    <nav>
-      <ul class="navBar">
-        <li class="homeNav">
-          <a href="#home" class="navItem">
-            <i class="lni lni-home"></i>
-            <span class="navItemName">HOME</span>
-          </a>
-        </li>
-        <li class="worksNav">
-          <a href="#works" class="navItem">
-            <i class="lni lni-briefcase"></i>
-            <span class="navItemName">PROJECTS</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
-  </aside>
-
-  <!--Beginning of the wrapper -->
-  <div class="outerWrapper"> 
-    <div class="innerWrapper">
-      <!-- Header -->
-      <header>
-        <div class="heroDescription">
-          <h1><span>Winston</span> Riggs</h1>
-          <p class="smallBio">A NYC based software developer interested about system development, concurrent programming, and economics.</p>
-          <div class="socialsResume">
-            <ul class="socialsList">
-              <li>
-                <a href="https://www.linkedin.com/in/winstonriggs/" target="_blank" rel="noopener noreferrer"><i class="lni lni-linkedin-original" aria-label="Link to Winston's LinkedIn page."></i></a>
-              </li>
-              <li>
-                <a href="https://github.com/wriggs12" target="_blank" rel="noopener noreferrer"><i class="lni lni-github-original" aria-label="Link to Winston's GitHub page."></i></a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </header>
-      <!-- Beginning of Main -->
-      <main>
-        <!-- Works Section -->
-        <section class="worksSection" id="works">
-          <div class="sectionHead">
-            <h2>PROJECTS</h2>
-          </div>
-
-          <div class="worksContainer sectionContainer">
-            <article class="workBox">
-              <div class="workImageContainer">
-                <img src="assets/images/chess.jpg" alt="Chess Engine Logo.">
-              </div>
-              <div class="workDescribeContainer">
-                <h3>Chess Engine</h3>
-                <h4>Technologies Used: <span class="techStack">C++</span></h4>
-                <ul>
-                  <li>Designing and implementing an original chess engine in C++ that prioritizes quick analysis over move accuracy</li>
-                  <li>Implenting a min-max algorithm with beta-alpha pruning for move analysis</li>
-                </ul>
-                <div class="workLinks">
-                  <a href="https://github.com/wriggs12/chess-engine" class="repoLink" target="_blank" rel="noopener noreferrer">Repo</a>
-                </div>
-              </div>
-            </article>
-
-            <article class="workBox">
-              <div class="workImageContainer">
-                <img src="assets/images/brunson.jpg" alt="Jalen Brunson">
-              </div>
-              <div class="workDescribeContainer">
-                <h3>Sports Team Trackerk</h3>
-                <h4>Technologies Used: <span class="techStack">Python</span>, <span class="techStack">Docker</span></h4>
-                <ul>
-                  <li>Developing a system that tracks stats on my favorite sports teams and keeps me up to date on games, injuries, trades, etc.</li>
-                </ul>
-                <div class="workLinks">
-                  <a href="https://github.com/wriggs12/Sports-Service-Thing" class="repoLink" target="_blank" rel="noopener noreferrer">Repo</a>
-                </div>
-              </div>
-            </article>
-
-            <article class="workBox">
-              <div class="workImageContainer">
-                <img src="assets/images/unix.png" alt="UNIX">
-              </div>
-              <div class="workDescribeContainer">
-                <h3>WinstonOS</h3>
-                <h4>Technologies Used: <span class="techStack">C</span>, <span class="techStack">ASM</span></h4>
-                <ul>
-                  <li>Currently developing a UNIX based OS for educational purposes.</li>
-                </ul>
-                <div class="workLinks">
-                  <a href="https://github.com/wriggs12/winstonOS" class="repoLink" target="_blank" rel="noopener noreferrer">Repo</a>
-                </div>
-              </div>
-            </article>
-          </div>
-        </section>
-      </main> <!-- End of Main -->
+  </header>
+  <main>
+    <div class="home">
+      Winston Riggs
+      <div class="bio">
+        A NYC based software developer interested about system development, concurrent programming, and economics.
+      </div>
     </div>
-    <!-- Footer -->
-    <footer>
-      <p>&copy; Winston Riggs <span id="spanYear"></span></p>
-    </footer>
-  </div> 
-  <!-- End of the wrapper -->
-  <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
-  <script type="text/javascript" src="scripts/index.js"></script>
+  </main>
 </body>
+
 </html>
