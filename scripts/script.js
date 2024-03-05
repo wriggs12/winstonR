@@ -70,40 +70,6 @@ function rotate(cube, rotFunc) {
     }; 
 }
 
-function translateY(cube, value) {
-    const bl  = cube.bl; 
-    const br  = cube.br; 
-    const tl  = cube.tl; 
-    const tr  = cube.tr; 
-    const blz = cube.blz;
-    const brz = cube.brz;
-    const tlz = cube.tlz;
-    const trz = cube.trz;
-    const start = cube.start;
-
-    bl.y  = cube.bl.y+value;
-    br.y  = cube.br.y+value;
-    tl.y  = cube.tl.y+value;
-    tr.y  = cube.tr.y+value;
-    blz.y = cube.blz.y+value;
-    brz.y = cube.brz.y+value;
-    tlz.y = cube.tlz.y+value;
-    trz.y = cube.trz.y+value;
-    start.y = cube.start.y-value;
-
-    return {
-        "bl":  bl, 
-        "br":  br, 
-        "tl":  tl, 
-        "tr":  tr, 
-        "blz": blz,
-        "brz": brz,
-        "tlz": tlz, 
-        "trz": trz,
-        "start": cube.start
-    };
-}
-
 function rotateZ(p, start) {
     const x = p.x - start.x;
     const y = p.y - start.y;
@@ -129,15 +95,6 @@ function rotateY(p, start) {
     const zz = (-x*Math.sin(angleY) + z*Math.cos(angleY)) + start.z
 
     return {x: xx, y: p.y, z: zz}
-}
-
-function drawLine(p0, p1) {
-    context.beginPath();
-    context.moveTo(p0.x, p0.y);
-    context.lineTo(p1.x, p1.y);
-    context.lineWidth = "2"
-    context.strokeStyle = "#222";
-    context.stroke();
 }
 
 function update() {
