@@ -1,30 +1,28 @@
-var canvas  = document.getElementById("canvas");
-var context = canvas.getContext("2d");
+const canvas  = document.getElementById("canvas");
+const context = canvas.getContext("2d");
 
-var fill = false;
+const angleX = 2 * Math.PI / 360;
+const angleY = 2 * Math.PI / 720;
+const angleZ = 2 * Math.PI / 1480;
 
-var angleX = 2 * Math.PI / 360;
-var angleY = 2 * Math.PI / 720;
-var angleZ = 2 * Math.PI / 1480;
+const rotX = true;
+const rotY = false;
+const rotZ = true;
 
-var rotX = true;
-var rotY = true;
-var rotZ = false;
-
-var cube = createCube(0, 0, 4, 1.5);   
+let cube = createCube(0, 0, 4, 1.5);   
 
 function createCube(x, y, z, size) {
-    var start = {"x": x, "y": y, "z": z, "size": size};
+    const start = {"x": x, "y": y, "z": z, "size": size};
 
-    var bl = {x: x-size/2, y:y-size/2, z:z-size/2}
-    var br = {x: x+size/2, y:y-size/2, z:z-size/2}
-    var tl = {x:x-size/2, y:y+size/2, z:z-size/2}
-    var tr = {x:x+size/2, y:y+size/2, z:z-size/2}
+    const bl = {x: x-size/2, y:y-size/2, z:z-size/2}
+    const br = {x: x+size/2, y:y-size/2, z:z-size/2}
+    const tl = {x:x-size/2, y:y+size/2, z:z-size/2}
+    const tr = {x:x+size/2, y:y+size/2, z:z-size/2}
 
-    var blz = {x:x-size/2, y:y-size/2, z:z+size/2}
-    var brz = {x:x+size/2, y:y-size/2, z:z+size/2}
-    var tlz = {x:x-size/2, y:y+size/2, z:z+size/2}
-    var trz = {x:x+size/2, y:y+size/2, z:z+size/2}
+    const blz = {x:x-size/2, y:y-size/2, z:z+size/2}
+    const brz = {x:x+size/2, y:y-size/2, z:z+size/2}
+    const tlz = {x:x-size/2, y:y+size/2, z:z+size/2}
+    const trz = {x:x+size/2, y:y+size/2, z:z+size/2}
 
     return {
         "bl": bl, 
@@ -39,9 +37,9 @@ function createCube(x, y, z, size) {
     };
 }
 
-function worldToScreen(p, offset) {
-    let factor = canvas.width;
-    let screen = {
+function worldToScreen(p) {
+    const factor = canvas.width;
+    const screen = {
         x: p.x / p.z * factor + (canvas.width/2), 
         y: p.y / p.z * factor + (canvas.height / 2)
     };
@@ -49,59 +47,15 @@ function worldToScreen(p, offset) {
     return screen
 }
 
-function rotateCubeZ(cube) {
-    let bl = rotateZ(cube.bl, cube.start);
-    let br = rotateZ(cube.br, cube.start);
-    let tl = rotateZ(cube.tl, cube.start);
-    let tr = rotateZ(cube.tr, cube.start);
-    let blz = rotateZ(cube.blz, cube.start);
-    let brz = rotateZ(cube.brz, cube.start);
-    let tlz = rotateZ(cube.tlz, cube.start);
-    let trz = rotateZ(cube.trz, cube.start);
-    return {
-        "bl": bl, 
-        "br": br, 
-        "tl": tl, 
-        "tr": tr, 
-        "blz": blz,
-        "brz": brz,
-        "tlz": tlz, 
-        "trz": trz,
-        "start": cube.start
-    }; 
-}
-
-function rotateCubeX(cube) {
-    let bl = rotateX(cube.bl, cube.start);
-    let br = rotateX(cube.br, cube.start);
-    let tl = rotateX(cube.tl, cube.start);
-    let tr = rotateX(cube.tr, cube.start);
-    let blz = rotateX(cube.blz, cube.start);
-    let brz = rotateX(cube.brz, cube.start);
-    let tlz = rotateX(cube.tlz, cube.start);
-    let trz = rotateX(cube.trz, cube.start);
-    return {
-        "bl": bl, 
-        "br": br, 
-        "tl": tl, 
-        "tr": tr, 
-        "blz": blz,
-        "brz": brz,
-        "tlz": tlz, 
-        "trz": trz,
-        "start": cube.start
-    }; 
-}
-
-function rotateCubeY(cube) {
-    let bl = rotateY(cube.bl, cube.start);
-    let br = rotateY(cube.br, cube.start);
-    let tl = rotateY(cube.tl, cube.start);
-    let tr = rotateY(cube.tr, cube.start);
-    let blz = rotateY(cube.blz, cube.start);
-    let brz = rotateY(cube.brz, cube.start);
-    let tlz = rotateY(cube.tlz, cube.start);
-    let trz = rotateY(cube.trz, cube.start);
+function rotate(cube, rotFunc) {
+    const bl = rotFunc(cube.bl, cube.start);
+    const br = rotFunc(cube.br, cube.start);
+    const tl = rotFunc(cube.tl, cube.start);
+    const tr = rotFunc(cube.tr, cube.start);
+    const blz = rotFunc(cube.blz, cube.start);
+    const brz = rotFunc(cube.brz, cube.start);
+    const tlz = rotFunc(cube.tlz, cube.start);
+    const trz = rotFunc(cube.trz, cube.start);
 
     return {
         "bl": bl, 
@@ -117,16 +71,15 @@ function rotateCubeY(cube) {
 }
 
 function translateY(cube, value) {
-
-    var bl  = cube.bl; 
-    var br  = cube.br; 
-    var tl  = cube.tl; 
-    var tr  = cube.tr; 
-    var blz = cube.blz;
-    var brz = cube.brz;
-    var tlz = cube.tlz;
-    var trz = cube.trz;
-    var start = cube.start;
+    const bl  = cube.bl; 
+    const br  = cube.br; 
+    const tl  = cube.tl; 
+    const tr  = cube.tr; 
+    const blz = cube.blz;
+    const brz = cube.brz;
+    const tlz = cube.tlz;
+    const trz = cube.trz;
+    const start = cube.start;
 
     bl.y  = cube.bl.y+value;
     br.y  = cube.br.y+value;
@@ -152,26 +105,29 @@ function translateY(cube, value) {
 }
 
 function rotateZ(p, start) {
-    let x = p.x - start.x;
-    let y = p.y - start.y;
+    const x = p.x - start.x;
+    const y = p.y - start.y;
+
     return {x: x*Math.cos(angleZ) - y*Math.sin(angleZ) + start.x, y:y*Math.cos(angleZ) + x*Math.sin(angleZ) + start.y, z: p.z}
 }
 
 function rotateX(p, start) {
-    let z = p.z - start.z;
-    let y = p.y - start.y;
+    const z = p.z - start.z;
+    const y = p.y - start.y;
 
-    let yy = y*Math.cos(angleX) - z*Math.sin(angleX) + start.y
-    let zz = (y*Math.sin(angleX) + z*Math.cos(angleX)) + start.z
+    const yy = y*Math.cos(angleX) - z*Math.sin(angleX) + start.y
+    const zz = (y*Math.sin(angleX) + z*Math.cos(angleX)) + start.z
+
     return {x: p.x, y: yy, z: zz}
 }
 
 function rotateY(p, start) {
-    let z = p.z - start.z;
-    let x = p.x - start.x;
+    const z = p.z - start.z;
+    const x = p.x - start.x;
 
-    let xx = x*Math.cos(angleY) + z*Math.sin(angleY) + start.x
-    let zz = (-x*Math.sin(angleY) + z*Math.cos(angleY)) + start.z
+    const xx = x*Math.cos(angleY) + z*Math.sin(angleY) + start.x
+    const zz = (-x*Math.sin(angleY) + z*Math.cos(angleY)) + start.z
+
     return {x: xx, y: p.y, z: zz}
 }
 
@@ -186,61 +142,53 @@ function drawLine(p0, p1) {
 
 function update() {
     context.clearRect(0, 0, canvas.width, canvas.height);
-   
-    // Cube
-    if (rotZ === true) {
-        cube = rotateCubeZ(cube);
-    }
 
-    if (rotY === true) {
-        cube = rotateCubeY(cube);
-    }
+    if (rotZ)
+        cube = rotate(cube, rotateZ);
+    if (rotY)
+        cube = rotate(cube, rotateY);
+    if (rotX)
+        cube = rotate(cube, rotateX);
 
-    if (rotX === true) {
-        cube = rotateCubeX(cube);
-    }
-
-    drawCube(cube, 0);
+    drawCube(cube);
     requestAnimationFrame(update);
 } 
 
-function drawCube(cube, offset) {
-    let blr = worldToScreen(cube.bl, offset)
-    let brr = worldToScreen(cube.br, offset)
-    let tlr = worldToScreen(cube.tl, offset)
-    let trr = worldToScreen(cube.tr, offset)
-    let blrz = worldToScreen(cube.blz, offset)
-    let brrz = worldToScreen(cube.brz, offset)
-    let tlrz = worldToScreen(cube.tlz, offset)
-    let trrz = worldToScreen(cube.trz, offset)
+function drawCube(cube) {
+    const blr = worldToScreen(cube.bl)
+    const brr = worldToScreen(cube.br)
+    const tlr = worldToScreen(cube.tl)
+    const trr = worldToScreen(cube.tr)
+    const blrz = worldToScreen(cube.blz)
+    const brrz = worldToScreen(cube.brz)
+    const tlrz = worldToScreen(cube.tlz)
+    const trrz = worldToScreen(cube.trz)
 
-    let front = {p1: blr, p2: brr, p3: trr, p4: tlr, color: "#bb2222",};
-    let back = {p1: blrz, p2: brrz, p3: trrz, p4: tlrz, color: "#22bb22",};
-    let left = {p1: blr, p2: tlr, p3: tlrz, p4: blrz, color: "#2222bb"};  
-    let right = {p1: brr, p2: trr, p3: trrz, p4: brrz, color: "#22bbbb"};
-    let top = {p1: tlr, p2: trr, p3: trrz, p4: tlrz, color: "#bb22bb"};
-    let bottom = {p1: blr, p2: brr, p3: brrz, p4: blrz, color: "#bbbb22"};
+    const front = {p1: blr, p2: brr, p3: trr, p4: tlr};
+    const back = {p1: blrz, p2: brrz, p3: trrz, p4: tlrz};
+    const left = {p1: blr, p2: tlr, p3: tlrz, p4: blrz};  
+    const right = {p1: brr, p2: trr, p3: trrz, p4: brrz};
+    const top = {p1: tlr, p2: trr, p3: trrz, p4: tlrz};
+    const bottom = {p1: blr, p2: brr, p3: brrz, p4: blrz};
 
-    var faces = [front, back, left, right, top, bottom];
+    const faces = [front, back, left, right, top, bottom];
     faces.forEach(drawFace);
 }
 
 function drawFace(face) {
-    let p1 = face.p1;
-    let p2 = face.p2;
-    let p3 = face.p3;
-    let p4 = face.p4;
+    const p1 = face.p1;
+    const p2 = face.p2;
+    const p3 = face.p3;
+    const p4 = face.p4;
 
-    let ctx = context;
-
-    ctx.beginPath();
-    ctx.moveTo(p1.x, p1.y);
-    ctx.lineTo(p2.x, p2.y);
-    ctx.lineTo(p3.x, p3.y);
-    ctx.lineTo(p4.x, p4.y);
-    ctx.closePath();
-    ctx.strokeStyle = "white";
-    ctx.stroke();
+    context.beginPath();
+    context.moveTo(p1.x, p1.y);
+    context.lineTo(p2.x, p2.y);
+    context.lineTo(p3.x, p3.y);
+    context.lineTo(p4.x, p4.y);
+    context.closePath();
+    context.strokeStyle = "white";
+    context.stroke();
 }
 
 requestAnimationFrame(update)
