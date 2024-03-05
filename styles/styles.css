@@ -14,7 +14,7 @@ body {
 
 .navbar {
   display: flex;
-  margin-right: 10em;
+  margin-right: 8em;
 }
 
 .navbar a {
@@ -33,7 +33,7 @@ body {
 .logo {
   display: flex;
   font-size: 18px;
-  margin-left: 10em;
+  margin-left: 8em;
 }
 
 .logo a {
@@ -68,5 +68,17 @@ body {
 }
 
 .home {
-  color: #9e9e9e;
+  color: #dedede;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bio {
+  max-width: 40em;
+  margin-bottom: 50px;
+  font-size: 26px;
+  line-height: 1.5;
+  padding: 20px;
+  text-align: left;
 }
