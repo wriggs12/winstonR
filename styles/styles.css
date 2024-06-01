@@ -77,7 +77,7 @@ body {
 }
 
 .bio {
-  width: 40em;
+  width: 90vh;
   font-size: 26px;
   line-height: 1.5;
   padding: 20px;
@@ -86,7 +86,7 @@ body {
 
 .working,
 .todo {
-  width: 50em;
+  width: 90vh;
   line-height: 1.5;
   padding: 20px;
   text-align: left;
