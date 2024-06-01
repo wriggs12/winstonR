@@ -77,14 +77,19 @@ body {
 }
 
 .bio {
-  max-width: 40em;
-  margin-bottom: 50px;
+  width: 40em;
   font-size: 26px;
   line-height: 1.5;
   padding: 20px;
   text-align: left;
 }
 
-.cube {
-  text-align: center;
+.working,
+.todo {
+  width: 50em;
+  line-height: 1.5;
+  padding: 20px;
+  text-align: left;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 21px;
 }
