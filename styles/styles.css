@@ -3,7 +3,7 @@ body {
   font-family: 'Verdana', 'Geneva', 'Tahoma', sans-serif;
   margin: 0;
   height: 100%;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .header {
@@ -85,11 +85,113 @@ body {
 }
 
 .working,
-.todo {
+.todo,
+.options {
   width: 90vh;
   line-height: 1.5;
   padding: 20px;
   text-align: left;
   font-family: 'Courier New', Courier, monospace;
   font-size: 21px;
+}
+
+.options {
+  max-width: 600px;
+  background-color: #2e2e2e;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.options h2 {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.options form {
+  display: flex;
+  flex-direction: column;
+  color: #dedede;
+}
+
+.options form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.options form input[type="number"] {
+  width: calc(100% - 22px);
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #444;
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: #3a3a3a;
+  color: #dedede;
+}
+
+.options form input[type="submit"] {
+  width: 100%;
+  padding: 12px;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.options form input[type="submit"]:hover {
+  background-color: #45a049;
+}
+
+.options form select {
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #444;
+  border-radius: 4px;
+  background-color: #3a3a3a;
+  color: #ffffff;
+  font-size: 16px;
+  background: linear-gradient(to bottom, #3a3a3a 0%, #333 100%);
+  cursor: pointer;
+}
+
+.options form select option {
+  background-color: #333;
+  /* Background color of options */
+  color: #ffffff;
+  /* Text color of options */
+}
+
+.options form select:focus {
+  border-color: #666;
+  /* Change border color on focus */
+  outline: none;
+  /* Remove default focus outline */
+}
+
+#option-output {
+  background-color: #2e2e2e;
+  border-radius: 4px;
+  color: #ffffff;
+}
+
+.form-group {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.form-group label {
+  margin-right: 10px;
+  width: 40%;
+}
+
+.form-group select {
+  width: 55%;
 }

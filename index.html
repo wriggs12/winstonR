@@ -12,6 +12,8 @@
   <link rel="stylesheet" href="styles/styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+
+  <script src="scripts/script.js" defer></script>
 </head>
 
 <!-- https://finnhub.io/api/v1/quote?symbol=AAPL&token=coq70spr01qoo31t189gcoq70spr01qoo31t18a0 -->
@@ -36,7 +38,7 @@
   <main>
     <div class="home">
       <div class="bio">
-        <b style="font-size: 40px;">Winston Riggs.</b><br /><br />
+        <b style="font-size: 40px;">Winston Riggs.</b><br><br>
         An NYC-based software developer that's interested in system development, concurrent programming, and economics.
       </div>
       <section>
@@ -55,6 +57,64 @@
             <li>N-Body Simulation</li>
             <li>Math Library</li>
           </ul>
+        </div>
+        <div class="options">
+          <h2>Options Pricer</h2>
+
+          <form id="calculationForm">
+            <label for="stock_price">Stock Price:</label>
+            <input type="number" id="stock_price" name="stock_price" step="0.01" />
+
+            <label for="strike_price">Strike Price:</label>
+            <input type="number" id="strike_price" name="strike_price" step="0.01">
+
+            <label for="time_to_expiration">Time to Expiration:</label>
+            <input type="number" id="time_to_expiration" name="time_to_expiration" step="0.01">
+
+            <label for="risk_free_rate">Risk Free Rate:</label>
+            <input type="number" id="risk_free_rate" name="risk_free_rate" step="0.01">
+
+            <label for="dividend_yield">Dividend Yield:</label>
+            <input type="number" id="dividend_yield" name="dividend_yield" step="0.01">
+
+            <label for="volatility">Volatility:</label>
+            <input type="number" id="volatility" name="volatility" step="0.01">
+
+            <div class="form-group">
+              <label for="greeks">Compute Greeks:</label>
+              <select id="greeks" name="greeks">
+                <option value="true">True</option>
+                <option value="false">False</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="type">Call/Put:</label>
+              <select id="type" name="type">
+                <option value="true">Call</option>
+                <option value="false">Put</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="model">Model:</label>
+              <select id="type" name="type" disabled>
+                <option value="true">Black Scholes</option>
+                <option value="false">Monte Carlo</option>
+              </select>
+            </div>
+
+            <input type="submit" value="Calculate">
+          </form>
+
+          <div id="option-output">
+            <p id="option-price"></p>
+            <p id="option-delta"></p>
+            <p id="option-gamma"></p>
+            <p id="option-theta"></p>
+            <p id="option-vega"></p>
+            <p id="option-rho"></p>
+          </div>
         </div>
       </section>
     </div>
