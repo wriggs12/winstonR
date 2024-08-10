@@ -15,6 +15,7 @@ const calulationHandler = (event) => {
     const volatility = document.getElementById("volatility").value;
     const greeks = document.getElementById("greeks").value === "true" ? 1 : 0;
     const type = document.getElementById("type").value === "true" ? 0 : 1;
+    const model = document.getElementById("model").value === "true" ? 0 : 1;
 
     const xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = () => {
@@ -40,8 +41,10 @@ const calulationHandler = (event) => {
         "include_greeks": greeks,
         "option_type": type
     }).toString();
+    
+    const endpoint = model === 0 ? "blackScholesPricing" : "monteCarloPricing"; 
 
-    xhttp.open("GET", `http://127.0.0.1:5000/blackScholesPricing?${params}`, true);
+    xhttp.open("GET", `http://3.89.65.83/${endpoint}?${params}`, true);
     xhttp.setRequestHeader("Content-Type", "application/json");
     xhttp.send();
 }
