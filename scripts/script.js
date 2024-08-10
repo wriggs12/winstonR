@@ -17,20 +17,6 @@ const calulationHandler = (event) => {
     const type = document.getElementById("type").value === "true" ? 0 : 1;
     const model = document.getElementById("model").value === "true" ? 0 : 1;
 
-    const xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = () => {
-        if (xhttp.readyState === 4 && xhttp.status === 200) {
-            const res = JSON.parse(xhttp.responseText);
-            
-            document.getElementById("option-price").innerText = `PRICE: ${res.Price}`;
-            document.getElementById("option-delta").innerText = `DELTA: ${res.Delta}`;
-            document.getElementById("option-gamma").innerText = `GAMMA: ${res.Gamma}`;
-            document.getElementById("option-theta").innerText = `THETA: ${res.Theta}`;
-            document.getElementById("option-vega").innerText = `VEGA: ${res.Vega}`;
-            document.getElementById("option-rho").innerText = `RHO: ${res.Rho}`;
-        }
-    };
-
     const params = new URLSearchParams({
         "stock_price": stock_price,
         "strike_price": strike_price,
@@ -43,8 +29,25 @@ const calulationHandler = (event) => {
     }).toString();
     
     const endpoint = model === 0 ? "blackScholesPricing" : "monteCarloPricing"; 
+    const url = new URL(`https://3.89.65.83/${endpoint}`);
+    url.search = new URLSearchParams(params).toString();
 
-    xhttp.open("GET", `http://3.89.65.83/${endpoint}?${params}`, true);
-    xhttp.setRequestHeader("Content-Type", "application/json");
-    xhttp.send();
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("option-price").innerText = `PRICE: ${data.Price}`;
+        document.getElementById("option-delta").innerText = `DELTA: ${data.Delta}`;
+        document.getElementById("option-gamma").innerText = `GAMMA: ${data.Gamma}`;
+        document.getElementById("option-theta").innerText = `THETA: ${data.Theta}`;
+        document.getElementById("option-vega").innerText = `VEGA: ${data.Vega}`;
+        document.getElementById("option-rho").innerText = `RHO: ${data.Rho}`;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });      
 }
