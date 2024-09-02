@@ -7,35 +7,17 @@ document.addEventListener("DOMContentLoaded", () => {
 const calulationHandler = (event) => {
     event.preventDefault();
 
-    const stock_price = document.getElementById("stock_price").value;
-    const strike_price = document.getElementById("strike_price").value;
-    const time_to_expiration = document.getElementById("time_to_expiration").value;
-    const risk_free_rate = document.getElementById("risk_free_rate").value;
-    const dividend_yield = document.getElementById("dividend_yield").value;
-    const volatility = document.getElementById("volatility").value;
-    const greeks = document.getElementById("greeks").value === "true" ? 1 : 0;
-    const type = document.getElementById("type").value === "true" ? 0 : 1;
-    const model = document.getElementById("model").value === "true" ? 0 : 1;
+    const submitButton = document.querySelector('input[type="submit"]');
+    setLoadingState(submitButton, true);
 
-    const params = new URLSearchParams({
-        "stock_price": stock_price,
-        "strike_price": strike_price,
-        "time_to_expiration": time_to_expiration,
-        "risk_free_rate": risk_free_rate,
-        "dividend_yield": dividend_yield,
-        "volatility": volatility,
-        "include_greeks": greeks,
-        "option_type": type
-    }).toString();
-    
-    const endpoint = model === 0 ? "blackScholesPricing" : "monteCarloPricing"; 
-    const url = new URL(`https://3.89.65.83/${endpoint}`);
-    url.search = new URLSearchParams(params).toString();
+    const formData = new FormData(event.target);
+    const url = new URL(`https://optionsapi-qjy4v3d7qa-uc.a.run.app/${formData.get("model")}`);
+    url.search = new URLSearchParams(formData).toString();
 
     fetch(url, {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         }
     })
     .then(response => response.json())
@@ -49,5 +31,25 @@ const calulationHandler = (event) => {
     })
     .catch(error => {
         console.error('Error:', error);
-    });      
+    })
+    .finally(() => {
+        setLoadingState(submitButton, false);
+    });
 }
+
+const setLoadingState = (button, isLoading) => {
+    if (isLoading)
+    {
+        button.value = "Calculating...";
+        button.disabled = true;
+        button.style.cursor = "not-allowed";
+        button.style.opacity = "0.7";
+    }
+    else
+    {
+        button.value = "Calculate";
+        button.disabled = false;
+        button.style.cursor = "pointer";
+        button.style.opacity = "1";
+    }
+};

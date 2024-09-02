@@ -82,25 +82,25 @@
 
             <div class="form-group">
               <label for="greeks">Compute Greeks:</label>
-              <select id="greeks" name="greeks">
-                <option value="true">True</option>
-                <option value="false">False</option>
+              <select id="include_greeks" name="include_greeks">
+                <option value=1>True</option>
+                <option value=0>False</option>
               </select>
             </div>
 
             <div class="form-group">
               <label for="type">Call/Put:</label>
-              <select id="type" name="type">
-                <option value="true">Call</option>
-                <option value="false">Put</option>
+              <select id="option_type" name="option_type">
+                <option value=1>Call</option>
+                <option value=0>Put</option>
               </select>
             </div>
 
             <div class="form-group">
               <label for="model">Model:</label>
               <select id="model" name="model">
-                <option value="true">Black Scholes</option>
-                <option value="false">Monte Carlo</option>
+                <option value="blackScholesPricing">Black Scholes</option>
+                <option value="monteCarloPricing">Monte Carlo</option>
               </select>
             </div>
 
