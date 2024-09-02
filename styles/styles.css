@@ -179,7 +179,8 @@ body {
   outline: none;
 }
 
-#option-output {
+#option-output,
+#email-output {
   background-color: #2e2e2e;
   border-radius: 4px;
   color: #ffffff;

@@ -48,8 +48,12 @@
           <form id="emailForm">
             <label for="email">Email Address:</label>
             <input type="email" id="email" name="email" required placeholder="Enter your email">
-            <input type="submit" value="Subscribe">
+            <input id="email-submit" type="submit" value="Subscribe">
           </form>
+
+          <div id="email-output">
+            <p id="email-message"></p>
+          </div>
         </div>
         <div class="working">
           <h2>Active Projects</h2>
@@ -113,7 +117,7 @@
               </select>
             </div>
 
-            <input type="submit" value="Calculate">
+            <input id="option-submit" type="submit" value="Calculate">
           </form>
 
           <div id="option-output">
