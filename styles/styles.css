@@ -13,13 +13,14 @@ body {
   align-items: center;
   padding: 10px;
   background-color: #121212;
+  width: 100%;
 }
 
 .navbar {
   display: flex;
   flex-wrap: wrap;
   margin: 0;
-  margin-right: 8em;
+  margin-right: 2rem;
 }
 
 .navbar a {
@@ -38,7 +39,6 @@ body {
   font-size: 18px;
   align-items: center;
   padding: 10px;
-  /* margin-left: 8em; */
 }
 
 .logo a {
@@ -73,55 +73,58 @@ body {
 }
 
 .home {
-  padding-left: 5em;
+  padding-left: 5%;
 }
 
 .bio {
-  width: 90vh;
   font-size: 26px;
-  line-height: 1.5;
-  padding: 20px;
-  text-align: left;
+  margin-top: 1rem;
 }
 
+.bio,
 .working,
 .todo,
-.options {
-  width: 90vh;
+.options,
+.email-collection {
+  width: 90%;
   line-height: 1.5;
   padding: 20px;
   text-align: left;
   font-family: 'Courier New', Courier, monospace;
   font-size: 21px;
-}
-
-.options {
-  max-width: 600px;
   background-color: #2e2e2e;
   border-radius: 8px;
   margin-bottom: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.options h2 {
+.bio h2,
+.working h2,
+.todo h2,
+.options h2,
+.email-collection h2 {
   text-align: center;
   font-size: 24px;
   margin-bottom: 20px;
 }
 
-.options form {
+.options form,
+.email-collection form {
   display: flex;
   flex-direction: column;
   color: #dedede;
+  width: 100%;
 }
 
-.options form label {
+.options form label,
+.email-collection form label {
   display: block;
   margin-bottom: 8px;
   font-weight: bold;
 }
 
-.options form input[type="number"] {
+.options form input[type="number"],
+.email-collection form input[type="email"] {
   width: calc(100% - 22px);
   padding: 10px;
   margin-bottom: 20px;
@@ -132,7 +135,8 @@ body {
   color: #dedede;
 }
 
-.options form input[type="submit"] {
+.options form input[type="submit"],
+.email-collection form input[type="submit"] {
   width: 100%;
   padding: 12px;
   background-color: #4CAF50;
@@ -145,11 +149,13 @@ body {
   transition: background-color 0.3s ease;
 }
 
-.options form input[type="submit"]:hover {
+.options form input[type="submit"]:hover,
+.email-collection form input[type="submit"]:hover {
   background-color: #45a049;
 }
 
-.options form select {
+.options form select,
+.email-collection form select {
   padding: 10px;
   margin-bottom: 20px;
   border: 1px solid #444;
@@ -161,18 +167,16 @@ body {
   cursor: pointer;
 }
 
-.options form select option {
+.options form select option,
+.email-collection form select option {
   background-color: #333;
-  /* Background color of options */
   color: #ffffff;
-  /* Text color of options */
 }
 
-.options form select:focus {
+.options form select:focus,
+.email-collection form select:focus {
   border-color: #666;
-  /* Change border color on focus */
   outline: none;
-  /* Remove default focus outline */
 }
 
 #option-output {
