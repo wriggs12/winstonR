@@ -1,202 +1,355 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Verdana', 'Geneva', 'Tahoma', sans-serif;
-  background-color: #1e1e1e;
-  color: #dedede;
+  font-family: 'Courier Prime', 'Courier New', monospace;
+  background-color: #121212;
+  color: #f5f5f5;
+  line-height: 1.6;
 }
 
 .header {
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
-  background-color: #121212;
-  width: 100%;
+  padding: 12px 16px;
+  background-color: #1a1a1a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-wrap: wrap;
 }
 
 .navbar {
   display: flex;
   flex-wrap: wrap;
   margin: 0;
-  margin-right: 2rem;
+  gap: 4px;
 }
 
 .navbar a {
-  color: #9e9e9e;
-  padding: 14px 16px;
+  color: #b0b0b0;
+  padding: 8px 12px;
   text-decoration: none;
-  font-size: 17px;
+  font-size: 16px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
 }
 
 .navbar a:hover {
   color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 .logo {
   display: flex;
   font-size: 18px;
   align-items: center;
-  padding: 10px;
+  gap: 8px;
+  margin: 8px 0;
 }
 
 .logo a {
   text-decoration: none;
   color: white;
+  font-weight: 700;
 }
 
 .logo_text {
   font-weight: 600;
+  letter-spacing: -0.5px;
 }
 
 .logo_cursor {
-  content: "";
-  width: 8px;
-  height: 23px;
+  width: 10px;
+  height: 22px;
   background: #026893;
   display: inline-block;
-  animation: cursor-blink 1s steps(2) infinite;
+  animation: cursor-blink 1.2s steps(1) infinite;
   vertical-align: middle;
+  border-radius: 0;
 }
 
 @keyframes cursor-blink {
-  0% {
-    opacity: 0;
+  0%, 100% {
+    opacity: 1;
   }
-}
-
-@-webkit-keyframes cursor-blink {
-  0% {
+  50% {
     opacity: 0;
   }
 }
 
 .home {
-  padding-left: 5%;
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+/* Row layout for working and todo sections */
+.working-todo-row {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+@media (min-width: 768px) {
+  .working-todo-row {
+    flex-direction: row;
+  }
+  
+  .working-todo-row .working,
+  .working-todo-row .todo {
+    flex: 1;
+    margin-bottom: 0;
+  }
 }
 
 .bio {
-  font-size: 26px;
-  margin-top: 1rem;
+  font-size: 18px;
+  line-height: 1.8;
+  margin-bottom: 24px;
 }
 
 .bio,
 .working,
 .todo,
-.options,
-.email-collection {
-  width: 90%;
-  line-height: 1.5;
-  padding: 20px;
-  text-align: left;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 21px;
-  background-color: #2e2e2e;
+.options {
+  width: 100%;
+  padding: 20px 16px;
   border-radius: 8px;
-  margin-bottom: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+  background-color: #1e1e1e;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid #333;
+  box-sizing: border-box;
+}
+
+/* Remove bottom margin when in row layout */
+.working-todo-row .working,
+.working-todo-row .todo {
+  margin-bottom: 0;
 }
 
 .bio h2,
 .working h2,
 .todo h2,
-.options h2,
-.email-collection h2 {
+.options h2 {
   text-align: center;
-  font-size: 24px;
+  font-size: 22px;
   margin-bottom: 20px;
+  color: #dedede;
+  font-weight: normal;
+  letter-spacing: 1px;
+  border-bottom: 1px solid #444;
+  padding-bottom: 10px;
 }
 
-.options form,
-.email-collection form {
+.options form {
   display: flex;
   flex-direction: column;
-  color: #dedede;
+  color: #f5f5f5;
   width: 100%;
+  gap: 16px;
 }
 
-.options form label,
-.email-collection form label {
+.options form label {
   display: block;
   margin-bottom: 8px;
-  font-weight: bold;
+  font-weight: normal;
+  color: #e0e0e0;
 }
 
-.options form input[type="number"],
-.email-collection form input[type="email"] {
-  width: calc(100% - 22px);
-  padding: 10px;
-  margin-bottom: 20px;
+.options form input[type="number"] {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 16px;
   border: 1px solid #444;
   border-radius: 4px;
   font-size: 16px;
-  background-color: #3a3a3a;
-  color: #dedede;
+  font-family: 'Courier Prime', 'Courier New', monospace;
+  background-color: #2a2a2a;
+  color: #f5f5f5;
+  transition: border-color 0.3s;
+  box-sizing: border-box;
 }
 
-.options form input[type="submit"],
-.email-collection form input[type="submit"] {
+.options form input[type="number"]:focus {
+  border-color: #026893;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(2, 104, 147, 0.2);
+}
+
+.options form input[type="submit"] {
   width: 100%;
   padding: 12px;
-  background-color: #4CAF50;
+  background-color: #026893;
   border: none;
   border-radius: 4px;
   color: white;
   font-size: 16px;
+  font-family: 'Courier Prime', 'Courier New', monospace;
   cursor: pointer;
   text-align: center;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s;
 }
 
-.options form input[type="submit"]:hover,
-.email-collection form input[type="submit"]:hover {
-  background-color: #45a049;
+.options form input[type="submit"]:hover {
+  background-color: #0284c7;
 }
 
-.options form select,
-.email-collection form select {
-  padding: 10px;
-  margin-bottom: 20px;
+.options form select {
+  padding: 10px 12px;
+  margin-bottom: 16px;
   border: 1px solid #444;
   border-radius: 4px;
-  background-color: #3a3a3a;
-  color: #ffffff;
+  background-color: #2a2a2a;
+  color: #f5f5f5;
   font-size: 16px;
-  background: linear-gradient(to bottom, #3a3a3a 0%, #333 100%);
+  font-family: 'Courier Prime', 'Courier New', monospace;
   cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23f5f5f5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
 }
 
-.options form select option,
-.email-collection form select option {
-  background-color: #333;
-  color: #ffffff;
-}
-
-.options form select:focus,
-.email-collection form select:focus {
-  border-color: #666;
+.options form select:focus {
+  border-color: #026893;
   outline: none;
+}
+
+.options form select option {
+  background-color: #2a2a2a;
+  color: #f5f5f5;
+  font-family: 'Courier Prime', 'Courier New', monospace;
 }
 
 #option-output,
 #email-output {
-  background-color: #2e2e2e;
+  background-color: #2a2a2a;
   border-radius: 4px;
-  color: #ffffff;
+  color: #f5f5f5;
+  padding: 16px;
+  margin-top: 16px;
+  border: 1px solid #444;
+  font-family: 'Courier Prime', 'Courier New', monospace;
 }
 
 .form-group {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
+  flex-direction: column;
+  margin-bottom: 16px;
+  width: 100%;
 }
 
-.form-group label {
-  margin-right: 10px;
-  width: 40%;
+/* Mobile-first approach */
+@media (min-width: 576px) {
+  .home {
+    padding: 32px 24px;
+  }
+  
+  .bio, .working, .todo, .options {
+    padding: 24px 20px;
+  }
+  
+  .navbar a {
+    padding: 10px 14px;
+  }
 }
 
-.form-group select {
-  width: 55%;
+@media (min-width: 768px) {
+  .form-group {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .form-group label {
+    width: 30%;
+    margin-bottom: 0;
+  }
+  
+  .form-group select,
+  .form-group input {
+    width: 70%;
+    margin-bottom: 0;
+  }
+  
+  .navbar {
+    gap: 8px;
+  }
+  
+  .logo {
+    font-size: 20px;
+  }
+  
+  .bio {
+    font-size: 20px;
+  }
+}
+
+/* Add typewriter styling for text content */
+.bio p, 
+.working p, 
+.todo p {
+  font-family: 'Courier Prime', 'Courier New', monospace;
+  letter-spacing: 0.5px;
+}
+
+/* Improve readability of code blocks with typewriter font */
+code, pre {
+  font-family: 'Courier Prime', 'Courier New', monospace;
+  background-color: #2a2a2a;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.9em;
+}
+
+pre {
+  padding: 16px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+/* Add some styling specifically for mobile viewports */
+@media (max-width: 576px) {
+  .header {
+    padding: 10px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .navbar {
+    margin-top: 10px;
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .navbar a {
+    font-size: 14px;
+    padding: 8px 10px;
+  }
+  
+  h2 {
+    font-size: 20px;
+  }
+  
+  /* Make sure the side-by-side sections stack properly on very small screens */
+  .working-todo-row {
+    flex-direction: column;
+  }
+  
+  .working-todo-row .working, 
+  .working-todo-row .todo {
+    width: 100%;
+    margin-bottom: 24px;
+  }
+  
+  .working-todo-row .todo:last-child {
+    margin-bottom: 0;
+  }
 }

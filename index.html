@@ -43,30 +43,17 @@
           An NYC-based software developer that's interested in system development, concurrent programming, and
           economics.
         </div>
-        <div class="email-collection">
-          <h2>Subscribe for the BETA release of my upcoming app</h2>
-          <form id="emailForm">
-            <label for="email">Email Address:</label>
-            <input type="email" id="email" name="email" required placeholder="Enter your email">
-            <input id="email-submit" type="submit" value="Subscribe">
-          </form>
-
-          <div id="email-output">
-            <p id="email-message"></p>
-          </div>
-        </div>
         <div class="working">
           <h2>Active Projects</h2>
           <ul>
-            <li>Chess Engine</li>
-            <li>Social Network App</li>
+            <li>Trading System</li>
           </ul>
         </div>
         <div class="todo">
           <h2>TODO</h2>
           <ul>
             <li>Compiler</li>
-            <li>Operating System Kernel</li>
+            <li>Operating System</li>
             <li>N-Body Simulation</li>
             <li>Math Library</li>
           </ul>
@@ -76,22 +63,22 @@
 
           <form id="calculationForm">
             <label for="stock_price">Stock Price:</label>
-            <input type="number" id="stock_price" name="stock_price" required step="0.01" />
+            <input type="number" id="stock_price" name="stock_price" required step="0.01" placeholder="E.g. $150"/>
 
             <label for="strike_price">Strike Price:</label>
-            <input type="number" id="strike_price" name="strike_price" required step="0.01">
+            <input type="number" id="strike_price" name="strike_price" required step="0.01" placeholder="E.g. $175">
 
             <label for="time_to_expiration">Time to Expiration:</label>
-            <input type="number" id="time_to_expiration" name="time_to_expiration" required step="0.01">
+            <input type="number" id="time_to_expiration" name="time_to_expiration" required step="0.01" placeholder="E.g. 0.5 (for 6 months)">
 
             <label for="risk_free_rate">Risk Free Rate:</label>
-            <input type="number" id="risk_free_rate" name="risk_free_rate" required step="0.01">
+            <input type="number" id="risk_free_rate" name="risk_free_rate" required step="0.01" placeholder="E.g. 0.05 (for 5%)">
 
             <label for="dividend_yield">Dividend Yield:</label>
-            <input type="number" id="dividend_yield" name="dividend_yield" required step="0.01">
+            <input type="number" id="dividend_yield" name="dividend_yield" required step="0.01" placeholder="E.g. 0.05 (for 5%)">
 
             <label for="volatility">Volatility:</label>
-            <input type="number" id="volatility" name="volatility" required step="0.01">
+            <input type="number" id="volatility" name="volatility" required step="0.01" placeholder="E.g. 0.05 (for 5%)">
 
             <div class="form-group">
               <label for="greeks">Compute Greeks:</label>
