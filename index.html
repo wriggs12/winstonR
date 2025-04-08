@@ -16,8 +16,6 @@
   <script src="scripts/script.js" defer></script>
 </head>
 
-<!-- https://finnhub.io/api/v1/quote?symbol=AAPL&token=coq70spr01qoo31t189gcoq70spr01qoo31t18a0 -->
-
 <body>
   <header>
     <div class="header">
@@ -63,22 +61,26 @@
 
           <form id="calculationForm">
             <label for="stock_price">Stock Price:</label>
-            <input type="number" id="stock_price" name="stock_price" required step="0.01" placeholder="E.g. $150"/>
+            <input type="number" id="stock_price" name="stock_price" required step="0.01" placeholder="E.g. $150" />
 
             <label for="strike_price">Strike Price:</label>
             <input type="number" id="strike_price" name="strike_price" required step="0.01" placeholder="E.g. $175">
 
             <label for="time_to_expiration">Time to Expiration:</label>
-            <input type="number" id="time_to_expiration" name="time_to_expiration" required step="0.01" placeholder="E.g. 0.5 (for 6 months)">
+            <input type="number" id="time_to_expiration" name="time_to_expiration" required step="0.01"
+              placeholder="E.g. 0.5 (for 6 months)">
 
             <label for="risk_free_rate">Risk Free Rate:</label>
-            <input type="number" id="risk_free_rate" name="risk_free_rate" required step="0.01" placeholder="E.g. 0.05 (for 5%)">
+            <input type="number" id="risk_free_rate" name="risk_free_rate" required step="0.01"
+              placeholder="E.g. 0.05 (for 5%)">
 
             <label for="dividend_yield">Dividend Yield:</label>
-            <input type="number" id="dividend_yield" name="dividend_yield" required step="0.01" placeholder="E.g. 0.05 (for 5%)">
+            <input type="number" id="dividend_yield" name="dividend_yield" required step="0.01"
+              placeholder="E.g. 0.05 (for 5%)">
 
             <label for="volatility">Volatility:</label>
-            <input type="number" id="volatility" name="volatility" required step="0.01" placeholder="E.g. 0.05 (for 5%)">
+            <input type="number" id="volatility" name="volatility" required step="0.01"
+              placeholder="E.g. 0.05 (for 5%)">
 
             <div class="form-group">
               <label for="greeks">Compute Greeks:</label>
@@ -117,6 +119,27 @@
           </div>
         </div>
       </section>
+    </div>
+    <div class="stock-widget">
+      <div class="stock-header">
+        <h2>Stock Watchlist</h2>
+        <p id="last-updated"></p>
+      </div>
+
+      <table class="stock-table">
+        <thead>
+          <tr>
+            <th>Symbol</th>
+            <th>Price</th>
+            <th>Change</th>
+            <th>% Change</th>
+            <th>High</th>
+            <th>Low</th>
+          </tr>
+        </thead>
+        <tbody id="stock-data">
+        </tbody>
+      </table>
     </div>
   </main>
 </body>

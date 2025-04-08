@@ -71,9 +71,12 @@ body {
 }
 
 @keyframes cursor-blink {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0;
   }
@@ -98,7 +101,7 @@ body {
   .working-todo-row {
     flex-direction: row;
   }
-  
+
   .working-todo-row .working,
   .working-todo-row .todo {
     flex: 1;
@@ -251,11 +254,14 @@ body {
   .home {
     padding: 32px 24px;
   }
-  
-  .bio, .working, .todo, .options {
+
+  .bio,
+  .working,
+  .todo,
+  .options {
     padding: 24px 20px;
   }
-  
+
   .navbar a {
     padding: 10px 14px;
   }
@@ -267,41 +273,42 @@ body {
     align-items: center;
     gap: 16px;
   }
-  
+
   .form-group label {
     width: 30%;
     margin-bottom: 0;
   }
-  
+
   .form-group select,
   .form-group input {
     width: 70%;
     margin-bottom: 0;
   }
-  
+
   .navbar {
     gap: 8px;
   }
-  
+
   .logo {
     font-size: 20px;
   }
-  
+
   .bio {
     font-size: 20px;
   }
 }
 
 /* Add typewriter styling for text content */
-.bio p, 
-.working p, 
+.bio p,
+.working p,
 .todo p {
   font-family: 'Courier Prime', 'Courier New', monospace;
   letter-spacing: 0.5px;
 }
 
 /* Improve readability of code blocks with typewriter font */
-code, pre {
+code,
+pre {
   font-family: 'Courier Prime', 'Courier New', monospace;
   background-color: #2a2a2a;
   border-radius: 4px;
@@ -322,34 +329,149 @@ pre {
     flex-direction: column;
     align-items: flex-start;
   }
-  
+
   .navbar {
     margin-top: 10px;
     width: 100%;
     justify-content: space-between;
   }
-  
+
   .navbar a {
     font-size: 14px;
     padding: 8px 10px;
   }
-  
+
   h2 {
     font-size: 20px;
   }
-  
+
   /* Make sure the side-by-side sections stack properly on very small screens */
   .working-todo-row {
     flex-direction: column;
   }
-  
-  .working-todo-row .working, 
+
+  .working-todo-row .working,
   .working-todo-row .todo {
     width: 100%;
     margin-bottom: 24px;
   }
-  
+
   .working-todo-row .todo:last-child {
     margin-bottom: 0;
+  }
+}
+
+.stock-widget {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 16px;
+  border-radius: 8px;
+  background-color: #1e1e1e;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid #333;
+  box-sizing: border-box;
+  margin-bottom: 24px;
+  font-family: 'Courier Prime', 'Courier New', monospace;
+  color: #f5f5f5;
+}
+
+.stock-header {
+  margin-bottom: 20px;
+}
+
+.stock-header h2 {
+  text-align: center;
+  font-size: 22px;
+  margin-bottom: 20px;
+  color: #dedede;
+  font-weight: normal;
+  letter-spacing: 1px;
+  border-bottom: 1px solid #444;
+  padding-bottom: 10px;
+  width: 100%;
+}
+
+.stock-header p {
+  color: #b0b0b0;
+  text-align: center;
+}
+
+.stock-controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.stock-controls button {
+  padding: 12px;
+  background-color: #026893;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: 'Courier Prime', 'Courier New', monospace;
+  transition: background-color 0.3s;
+}
+
+.stock-controls button:hover {
+  background-color: #0284c7;
+}
+
+.stock-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+
+.stock-table th,
+.stock-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #444;
+  font-family: 'Courier Prime', 'Courier New', monospace;
+}
+
+.stock-table th {
+  background-color: #2a2a2a;
+  font-weight: normal;
+  color: #e0e0e0;
+}
+
+.stock-table tr:hover {
+  background-color: rgba(2, 104, 147, 0.1);
+}
+
+.positive {
+  color: #4ade80;
+}
+
+.negative {
+  color: #f87171;
+}
+
+/* Mobile responsiveness adjustments */
+@media (max-width: 768px) {
+  .stock-controls {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .stock-controls button {
+    width: 100%;
+  }
+
+  .stock-table th,
+  .stock-table td {
+    padding: 8px;
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 576px) {
+  .stock-widget {
+    padding: 24px 20px;
   }
 }

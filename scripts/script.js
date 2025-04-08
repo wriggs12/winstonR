@@ -1,13 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("calculationForm").addEventListener("submit", (event) => {
-        calulationHandler(event);
+        calculationHandler(event);
     });
-    document.getElementById("emailForm").addEventListener("submit", (event) => {
-        subscribeHandler(event);
-    });
+
+    fetchAllStockData();
 });
 
-const calulationHandler = (event) => {
+const calculationHandler = (event) => {
     event.preventDefault();
 
     const submitButton = document.getElementById('option-submit');
@@ -24,66 +23,118 @@ const calulationHandler = (event) => {
             'Content-Type': 'application/json',
         }
     })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById("option-price").innerText = `PRICE: ${data.Price}`;
-        document.getElementById("option-delta").innerText = `DELTA: ${data.Delta}`;
-        document.getElementById("option-gamma").innerText = `GAMMA: ${data.Gamma}`;
-        document.getElementById("option-theta").innerText = `THETA: ${data.Theta}`;
-        document.getElementById("option-vega").innerText = `VEGA: ${data.Vega}`;
-        document.getElementById("option-rho").innerText = `RHO: ${data.Rho}`;
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    })
-    .finally(() => {
-        setLoadingState(submitButton, false);
-        submitButton.value = "Calculate";
-    });
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("option-price").innerText = `PRICE: ${data.Price}`;
+            document.getElementById("option-delta").innerText = `DELTA: ${data.Delta}`;
+            document.getElementById("option-gamma").innerText = `GAMMA: ${data.Gamma}`;
+            document.getElementById("option-theta").innerText = `THETA: ${data.Theta}`;
+            document.getElementById("option-vega").innerText = `VEGA: ${data.Vega}`;
+            document.getElementById("option-rho").innerText = `RHO: ${data.Rho}`;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        })
+        .finally(() => {
+            setLoadingState(submitButton, false);
+            submitButton.value = "Calculate";
+        });
 }
 
 const setLoadingState = (button, isLoading) => {
-    if (isLoading)
-    {
+    if (isLoading) {
         button.disabled = true;
         button.style.cursor = "not-allowed";
         button.style.opacity = "0.7";
     }
-    else
-    {
+    else {
         button.disabled = false;
         button.style.cursor = "pointer";
         button.style.opacity = "1";
     }
 };
 
-const subscribeHandler = (event) => {
-    event.preventDefault();
+const fetchAllStockData = () => {
+    document.getElementById('stock-data').innerHTML = '';
+    const watchlist = ["AAPL", "FICO", "VOO", "SPY", "APP"];
 
-    const submitButton = document.getElementById('email-submit');
-    setLoadingState(submitButton, true);
-    submitButton.value = "Subscribing...";
+    const now = new Date();
+    document.getElementById('last-updated').textContent = `As of: ${now.toLocaleTimeString()}`;
 
-    const formData = new FormData(event.target);
-    const url = new URL(`https://barsapi-3kgcirzfmq-uc.a.run.app/subscribe`);
-    const email = formData.get('email');
+    const promises = watchlist.map(symbol => fetchStockData(symbol));
 
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: email }),
-    })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById("email-message").innerText = data.data.message;
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    })
-    .finally(() => {
-        setLoadingState(submitButton, false);
-        submitButton.value = "Subscribe";
+    const loadingTimeout = setTimeout(() => {
+        if (document.getElementById('stock-data').children.length === 0) {
+            const loadingRow = document.createElement('tr');
+            loadingRow.id = 'loading-row';
+            loadingRow.innerHTML = `<td colspan="7" style="text-align: center;">Loading stock data...</td>`;
+            document.getElementById('stock-data').appendChild(loadingRow);
+        }
+    }, 300);
+
+    Promise.all(promises).finally(() => {
+        clearTimeout(loadingTimeout);
+        const loadingRow = document.getElementById('loading-row');
+        if (loadingRow) loadingRow.remove();
     });
-};
+}
+
+
+const fetchStockData = async (symbol) => {
+    try {
+        const apiKey = process.env.FINNHUB_API_KEY || '';
+        const response = await fetch(`https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${apiKey}`);
+
+        if (!response.ok) {
+            throw new Error(`Error fetching data for ${symbol}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        const stockData = {
+            symbol: symbol,
+            price: data.c,
+            change: data.d,
+            percentChange: data.dp,
+            high: data.h,
+            low: data.l
+        };
+
+        renderStockRow(stockData);
+        return stockData;
+
+    }
+    catch (error) {
+        console.error(error);
+    }
+}
+
+const renderStockRow = (data) => {
+    const stockTable = document.getElementById('stock-data');
+
+    let row = document.querySelector(`tr[data-symbol="${data.symbol}"]`);
+
+    if (!row) {
+        row = document.createElement('tr');
+        row.setAttribute('data-symbol', data.symbol);
+        stockTable.appendChild(row);
+    }
+
+    const formattedPrice = data.price.toFixed(2);
+    const formattedChange = data.change.toFixed(2);
+    const formattedPercentChange = data.percentChange.toFixed(2);
+    const formattedHigh = data.high.toFixed(2);
+    const formattedLow = data.low.toFixed(2);
+
+    const changeClass = data.change >= 0 ? 'positive' : 'negative';
+    const changeSign = data.change >= 0 ? '+' : '';
+
+    row.innerHTML = `
+      <td>${data.symbol}</td>
+      <td>$${formattedPrice}</td>
+      <td class="${changeClass}">${changeSign}${formattedChange}</td>
+      <td class="${changeClass}">${changeSign}${formattedPercentChange}%</td>
+      <td>$${formattedHigh}</td>
+      <td>$${formattedLow}</td>
+    `;
+}
