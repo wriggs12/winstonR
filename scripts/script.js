@@ -90,7 +90,7 @@ const fetchStockData = async (symbols) => {
 
         const data = await response.json();
 
-        for (const stock of data.data) {
+        for (const stock of data) {
             const stockData = {
                 symbol: stock.symbol,
                 price: stock.c,
