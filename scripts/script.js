@@ -56,12 +56,12 @@ const setLoadingState = (button, isLoading) => {
 
 const fetchAllStockData = () => {
     document.getElementById('stock-data').innerHTML = '';
-    const watchlist = ["AAPL", "FICO", "VOO", "SPY", "APP"];
+    const watchlist = ["AAPL", "FICO", "VOO", "SPY"];
 
     const now = new Date();
     document.getElementById('last-updated').textContent = `As of: ${now.toLocaleTimeString()}`;
 
-    const promises = watchlist.map(symbol => fetchStockData(symbol));
+    const promise = fetchStockData(watchlist);
 
     const loadingTimeout = setTimeout(() => {
         if (document.getElementById('stock-data').children.length === 0) {
@@ -72,7 +72,7 @@ const fetchAllStockData = () => {
         }
     }, 300);
 
-    Promise.all(promises).finally(() => {
+    promise.finally(() => {
         clearTimeout(loadingTimeout);
         const loadingRow = document.getElementById('loading-row');
         if (loadingRow) loadingRow.remove();
@@ -80,29 +80,34 @@ const fetchAllStockData = () => {
 }
 
 
-const fetchStockData = async (symbol) => {
+const fetchStockData = async (symbols) => {
     try {
-        const apiKey = process.env.FINNHUB_API_KEY || '';
-        const response = await fetch(`https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${apiKey}`);
+        const response = await fetch(`https://optionsapi-qjy4v3d7qa-uc.a.run.app/fetchEquityData?ticker=${symbols.join(",")}`);
 
         if (!response.ok) {
-            throw new Error(`Error fetching data for ${symbol}: ${response.statusText}`);
+            throw new Error(`Error fetching data for ${symbols}: ${response.statusText}`);
         }
 
         const data = await response.json();
 
-        const stockData = {
-            symbol: symbol,
-            price: data.c,
-            change: data.d,
-            percentChange: data.dp,
-            high: data.h,
-            low: data.l
-        };
+        if (!Array.isArray(data.data)) {
+            throw new Error("Unexpected response format");
+        }
 
-        renderStockRow(stockData);
-        return stockData;
+        for (const stock of data.data) {
+            const stockData = {
+                symbol: stock.symbol,
+                price: stock.c,
+                change: stock.d,
+                percentChange: stock.dp,
+                high: stock.h,
+                low: stock.l
+            };
 
+            renderStockRow(stockData);
+        }
+
+        return data.data;
     }
     catch (error) {
         console.error(error);
