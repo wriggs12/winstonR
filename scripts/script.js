@@ -90,10 +90,6 @@ const fetchStockData = async (symbols) => {
 
         const data = await response.json();
 
-        if (!Array.isArray(data.data)) {
-            throw new Error("Unexpected response format");
-        }
-
         for (const stock of data.data) {
             const stockData = {
                 symbol: stock.symbol,
