@@ -56,7 +56,7 @@ const setLoadingState = (button, isLoading) => {
 
 const fetchAllStockData = () => {
     document.getElementById('stock-data').innerHTML = '';
-    const watchlist = ["SPX", "NDAQ", "VIX", "BTC"];
+    const watchlist = ["SPY", "NDAQ", "VXX", "BTC"];
 
     const now = new Date();
     document.getElementById('last-updated').textContent = `As of: ${now.toLocaleTimeString()}`;
