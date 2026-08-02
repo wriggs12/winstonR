@@ -15,9 +15,12 @@
   <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
 
   <script src="scripts/script.js" defer></script>
+  <script src="scripts/particles.js" defer></script>
 </head>
 
 <body>
+  <canvas id="particles-bg" aria-hidden="true"></canvas>
+
   <header>
     <div class="header">
       <div class="logo">
@@ -28,28 +31,46 @@
       </div>
       <div class="navbar">
         <a href="codeography.html">Codeography</a>
-        <a class="fa fa-github" style="font-size:24px;" target="_blank" href="https://github.com/wriggs12"></a>
-        <a class="fa fa-linkedin" style="font-size:24px;" target="_blank"
-          href="https://www.linkedin.com/in/winstonriggs/"></a>
       </div>
     </div>
   </header>
+
   <main>
     <div class="home">
       <section>
         <div class="bio">
-          <b style="font-size: 40px;">Winston Riggs - NYC Software Developer</b><br><br>
-          An experienced NYC-based software developer specializing in financial systems development,
-          concurrent programming, and quantitative analysis. I build robust trading
-          systems, automated market makers, and financial modeling tools for the modern economy.
+          <div class="bio-text-col">
+            <h1 class="bio-title">I'm <span class="bio-name">Winston Riggs</span></h1>
+            <p class="bio-role">NYC Software Developer</p>
+            <p class="bio-text">I build software for a living. I enjoy creating tangible things on a computer, and am
+              largely driven by my curiousity about the world and the mysteries of our universe. I want to traverse the
+              remote corners of the planet to find out all of its secrets.</p>
 
+            <div class="socials">
+              <a class="fa fa-github" target="_blank" rel="noopener" aria-label="GitHub"
+                href="https://github.com/wriggs12"></a>
+              <a class="fa fa-linkedin" target="_blank" rel="noopener" aria-label="LinkedIn"
+                href="https://www.linkedin.com/in/winstonriggs/"></a>
+              <a class="fa fa-instagram" target="_blank" rel="noopener" aria-label="Instagram"
+                href="https://www.instagram.com/winston_riggs/"></a>
+            </div>
+          </div>
+
+          <!--
+            HEADSHOT: drop the photo at assets/images/headshot.jpg, then replace the
+            placeholder div below with this line (styling is already in place):
+            <img class="headshot" src="assets/images/headshot.jpg" alt="Winston Riggs">
+          -->
+          <div class="headshot headshot--placeholder" aria-hidden="true">WR</div>
         </div>
+
         <div class="working">
           <h2>Active Projects</h2>
           <ul>
             <li>Automated Market Maker</li>
           </ul>
         </div>
+
         <div class="todo">
           <h2>TODO</h2>
           <ul>
@@ -59,7 +80,8 @@
             <li>Math Library</li>
           </ul>
         </div>
-        <div class="options">
+
+        <!-- <div class="options">
           <h2>Options Pricer</h2>
 
           <form id="calculationForm">
@@ -120,10 +142,11 @@
             <p id="option-vega"></p>
             <p id="option-rho"></p>
           </div>
-        </div>
+        </div> -->
       </section>
     </div>
-    <div class="stock-widget">
+
+    <!-- <div class="stock-widget">
       <div class="stock-header">
         <h2>Stock Watchlist</h2>
         <p id="last-updated"></p>
@@ -143,8 +166,9 @@
         <tbody id="stock-data">
         </tbody>
       </table>
-    </div>
-<div class="graph-section">
+    </div> -->
+
+    <!-- <div class="graph-section">
       <h2>Market Spread Analysis</h2>
       <div class="graph-grid">
         <iframe loading="lazy" src="assets/graphs/market_liquidity_vs_market_volatility.html"
@@ -155,7 +179,7 @@
         <iframe loading="lazy" src="assets/graphs/risk_factor_vs_market_volatility.html" class="graph-frame"></iframe>
         <iframe loading="lazy" src="assets/graphs/risk_factor_vs_net_position.html" class="graph-frame"></iframe>
       </div>
-    </div>
+    </div> -->
   </main>
 </body>
 
