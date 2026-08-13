@@ -1,10 +1,42 @@
+:root {
+  --bg: #0f1419;
+  --surface: #161d24;
+  --surface-2: #1d2831;
+  --border: #29363f;
+
+  --text-1: #eaf2f6;
+  --text-2: #9db1bf;
+
+  --brand: #8ecae6;
+  --brand-deep: #219ebc;
+  --brand-dark: var(--brand-dark);
+  --accent: #ffb703;
+  --accent-warm: #fb8500;
+  --success: var(--success);
+  --danger: var(--danger);
+}
+
 body {
   margin: 0;
   padding: 0;
   font-family: 'Courier Prime', 'Courier New', monospace;
-  background-color: #121212;
-  color: #f5f5f5;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(33, 158, 188, 0.18), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(255, 183, 3, 0.07), transparent);
+  background-attachment: fixed;
+  color: var(--text-1);
   line-height: 1.6;
+}
+
+#particles-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
 }
 
 .header {
@@ -12,8 +44,11 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-  background-color: #1a1a1a;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  background-color: rgba(15, 20, 25, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -28,7 +63,7 @@ body {
 }
 
 .navbar a {
-  color: #b0b0b0;
+  color: var(--text-2);
   padding: 8px 12px;
   text-decoration: none;
   font-size: 16px;
@@ -37,8 +72,8 @@ body {
 }
 
 .navbar a:hover {
-  color: #ffffff;
-  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--brand);
+  background-color: rgba(142, 202, 230, 0.1);
 }
 
 .logo {
@@ -58,12 +93,17 @@ body {
 .logo_text {
   font-weight: 600;
   letter-spacing: -0.5px;
+  background: linear-gradient(90deg, var(--brand) 0%, var(--brand-deep) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .logo_cursor {
   width: 10px;
   height: 22px;
-  background: #026893;
+  background: var(--brand);
+  box-shadow: 0 0 10px rgba(142, 202, 230, 0.7);
   display: inline-block;
   animation: cursor-blink 1.2s steps(1) infinite;
   vertical-align: middle;
@@ -113,20 +153,168 @@ body {
   font-size: 18px;
   line-height: 1.8;
   margin-bottom: 24px;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 28px;
+}
+
+.bio-text-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.bio-title {
+  font-size: 34px;
+  line-height: 1.25;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.bio-name {
+  color: var(--brand);
+}
+
+.bio-role {
+  margin: 6px 0 18px;
+  font-size: 16px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.bio-text {
+  margin: 0;
+  color: var(--text-2);
+}
+
+.headshot {
+  flex: none;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--brand);
+  box-shadow: 0 0 0 6px rgba(142, 202, 230, 0.08), 0 8px 28px rgba(0, 0, 0, 0.45);
+}
+
+.headshot--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--brand);
+  background: linear-gradient(140deg, var(--surface-2), rgba(2, 104, 147, 0.35));
+  border-style: dashed;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .bio {
+    flex-direction: row;
+    align-items: center;
+    gap: 36px;
+  }
+
+  .bio-title {
+    font-size: 40px;
+  }
+
+  .headshot {
+    width: 190px;
+    height: 190px;
+  }
+}
+
+.socials {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+  padding-top: 22px;
+}
+
+.socials a {
+  font-size: 28px;
+  text-decoration: none;
+  transition: transform 0.25s ease, filter 0.25s ease;
+}
+
+.socials a:hover {
+  transform: translateY(-3px) scale(1.08);
+  filter: brightness(1.15);
+}
+
+.socials .fa-github {
+  color: #e6edf3;
+}
+
+.socials .fa-linkedin {
+  color: #1d8ce0;
+}
+
+/* Instagram's brand mark is a gradient — paint it onto the glyph itself */
+.socials .fa-instagram {
+  background: linear-gradient(45deg, #f9a03f 5%, #e8683c 25%, #dc2743 50%, #cc2366 75%, #a33bb5 95%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .bio,
 .working,
 .todo,
 .options {
+  --card-accent: var(--brand);
+  position: relative;
+  overflow: hidden;
   width: 100%;
-  padding: 20px 16px;
-  border-radius: 8px;
+  padding: 24px 20px;
+  border-radius: 10px;
   margin-bottom: 24px;
-  background-color: #1e1e1e;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  border: 1px solid #333;
+  background-image: linear-gradient(160deg, rgba(29, 40, 49, 0.92) 0%, rgba(22, 29, 36, 0.92) 100%);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.28);
+  border: 1px solid var(--border);
   box-sizing: border-box;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+/* Accent bar along the top of every card */
+.bio::before,
+.working::before,
+.todo::before,
+.options::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--card-accent), transparent 85%);
+}
+
+.bio:hover,
+.working:hover,
+.todo:hover,
+.options:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--card-accent) 45%, var(--border));
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.38);
+}
+
+.working {
+  --card-accent: var(--success);
+}
+
+.todo {
+  --card-accent: var(--accent);
+}
+
+.options {
+  --card-accent: var(--brand-deep);
 }
 
 /* Remove bottom margin when in row layout */
@@ -139,20 +327,56 @@ body {
 .working h2,
 .todo h2,
 .options h2 {
-  text-align: center;
-  font-size: 22px;
-  margin-bottom: 20px;
-  color: #dedede;
-  font-weight: normal;
-  letter-spacing: 1px;
-  border-bottom: 1px solid #444;
-  padding-bottom: 10px;
+  display: inline-block;
+  font-size: 20px;
+  margin: 0 0 20px;
+  color: var(--text-1);
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border-bottom: 3px solid var(--card-accent);
+  padding-bottom: 8px;
+}
+
+.working ul,
+.todo ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.working li,
+.todo li {
+  position: relative;
+  padding: 8px 0 8px 26px;
+  color: var(--text-2);
+  border-bottom: 1px solid rgba(41, 54, 63, 0.6);
+  transition: color 0.2s ease, padding-left 0.2s ease;
+}
+
+.working li:last-child,
+.todo li:last-child {
+  border-bottom: none;
+}
+
+.working li::before,
+.todo li::before {
+  content: "▸";
+  position: absolute;
+  left: 4px;
+  color: var(--card-accent);
+}
+
+.working li:hover,
+.todo li:hover {
+  color: var(--text-1);
+  padding-left: 32px;
 }
 
 .options form {
   display: flex;
   flex-direction: column;
-  color: #f5f5f5;
+  color: var(--text-1);
   width: 100%;
   gap: 16px;
 }
@@ -161,25 +385,25 @@ body {
   display: block;
   margin-bottom: 8px;
   font-weight: normal;
-  color: #e0e0e0;
+  color: var(--text-2);
 }
 
 .options form input[type="number"] {
   width: 100%;
   padding: 10px 12px;
   margin-bottom: 16px;
-  border: 1px solid #444;
+  border: 1px solid var(--border);
   border-radius: 4px;
   font-size: 16px;
   font-family: 'Courier Prime', 'Courier New', monospace;
-  background-color: #2a2a2a;
-  color: #f5f5f5;
+  background-color: var(--surface-2);
+  color: var(--text-1);
   transition: border-color 0.3s;
   box-sizing: border-box;
 }
 
 .options form input[type="number"]:focus {
-  border-color: #026893;
+  border-color: var(--brand-dark);
   outline: none;
   box-shadow: 0 0 0 2px rgba(2, 104, 147, 0.2);
 }
@@ -187,7 +411,7 @@ body {
 .options form input[type="submit"] {
   width: 100%;
   padding: 12px;
-  background-color: #026893;
+  background-color: var(--brand-dark);
   border: none;
   border-radius: 4px;
   color: white;
@@ -199,16 +423,16 @@ body {
 }
 
 .options form input[type="submit"]:hover {
-  background-color: #0284c7;
+  background-color: var(--brand-deep);
 }
 
 .options form select {
   padding: 10px 12px;
   margin-bottom: 16px;
-  border: 1px solid #444;
+  border: 1px solid var(--border);
   border-radius: 4px;
-  background-color: #2a2a2a;
-  color: #f5f5f5;
+  background-color: var(--surface-2);
+  color: var(--text-1);
   font-size: 16px;
   font-family: 'Courier Prime', 'Courier New', monospace;
   cursor: pointer;
@@ -221,24 +445,24 @@ body {
 }
 
 .options form select:focus {
-  border-color: #026893;
+  border-color: var(--brand-dark);
   outline: none;
 }
 
 .options form select option {
-  background-color: #2a2a2a;
-  color: #f5f5f5;
+  background-color: var(--surface-2);
+  color: var(--text-1);
   font-family: 'Courier Prime', 'Courier New', monospace;
 }
 
 #option-output,
 #email-output {
-  background-color: #2a2a2a;
+  background-color: var(--surface-2);
   border-radius: 4px;
-  color: #f5f5f5;
+  color: var(--text-1);
   padding: 16px;
   margin-top: 16px;
-  border: 1px solid #444;
+  border: 1px solid var(--border);
   font-family: 'Courier Prime', 'Courier New', monospace;
 }
 
@@ -310,7 +534,7 @@ body {
 code,
 pre {
   font-family: 'Courier Prime', 'Courier New', monospace;
-  background-color: #2a2a2a;
+  background-color: var(--surface-2);
   border-radius: 4px;
   padding: 2px 6px;
   font-size: 0.9em;
@@ -367,13 +591,13 @@ pre {
   margin: 0 auto;
   padding: 20px 16px;
   border-radius: 8px;
-  background-color: #1e1e1e;
+  background-color: var(--surface);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  border: 1px solid #333;
+  border: 1px solid var(--border);
   box-sizing: border-box;
   margin-bottom: 24px;
   font-family: 'Courier Prime', 'Courier New', monospace;
-  color: #f5f5f5;
+  color: var(--text-1);
 }
 
 .stock-header {
@@ -384,16 +608,16 @@ pre {
   text-align: center;
   font-size: 22px;
   margin-bottom: 20px;
-  color: #dedede;
+  color: var(--text-1);
   font-weight: normal;
   letter-spacing: 1px;
-  border-bottom: 1px solid #444;
+  border-bottom: 1px solid var(--border);
   padding-bottom: 10px;
   width: 100%;
 }
 
 .stock-header p {
-  color: #b0b0b0;
+  color: var(--text-2);
   text-align: center;
 }
 
@@ -406,7 +630,7 @@ pre {
 
 .stock-controls button {
   padding: 12px;
-  background-color: #026893;
+  background-color: var(--brand-dark);
   color: white;
   border: none;
   border-radius: 4px;
@@ -417,7 +641,7 @@ pre {
 }
 
 .stock-controls button:hover {
-  background-color: #0284c7;
+  background-color: var(--brand-deep);
 }
 
 .stock-table {
@@ -430,14 +654,14 @@ pre {
 .stock-table td {
   padding: 12px;
   text-align: left;
-  border-bottom: 1px solid #444;
+  border-bottom: 1px solid var(--border);
   font-family: 'Courier Prime', 'Courier New', monospace;
 }
 
 .stock-table th {
-  background-color: #2a2a2a;
+  background-color: var(--surface-2);
   font-weight: normal;
-  color: #e0e0e0;
+  color: var(--text-2);
 }
 
 .stock-table tr:hover {
@@ -445,11 +669,11 @@ pre {
 }
 
 .positive {
-  color: #4ade80;
+  color: var(--success);
 }
 
 .negative {
-  color: #f87171;
+  color: var(--danger);
 }
 
 .codeography-section {
@@ -464,10 +688,10 @@ pre {
   text-align: center;
   font-size: 22px;
   margin-bottom: 24px;
-  color: #dedede;
+  color: var(--text-1);
   font-weight: normal;
   letter-spacing: 1px;
-  border-bottom: 1px solid #444;
+  border-bottom: 1px solid var(--border);
   padding-bottom: 10px;
 }
 
@@ -478,8 +702,8 @@ pre {
 }
 
 .project-card {
-  background-color: #1e1e1e;
-  border: 1px solid #333;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 8px;
   padding: 20px 24px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
@@ -487,7 +711,7 @@ pre {
 }
 
 .project-card:hover {
-  border-color: #026893;
+  border-color: var(--brand-dark);
 }
 
 .project-header {
@@ -501,13 +725,13 @@ pre {
 .project-title {
   font-size: 17px;
   font-weight: 600;
-  color: #026893;
+  color: var(--brand-dark);
   text-decoration: none;
   letter-spacing: 0.3px;
 }
 
 .project-title:hover {
-  color: #0284c7;
+  color: var(--brand-deep);
   text-decoration: underline;
 }
 
@@ -522,13 +746,13 @@ pre {
   padding: 2px 8px;
   border-radius: 4px;
   background-color: rgba(2, 104, 147, 0.15);
-  color: #7ec8e3;
+  color: var(--brand);
   border: 1px solid rgba(2, 104, 147, 0.3);
   letter-spacing: 0.5px;
 }
 
 .project-blurb {
-  color: #b0b0b0;
+  color: var(--text-2);
   font-size: 14px;
   line-height: 1.7;
   margin: 0;
@@ -690,7 +914,7 @@ pre {
   max-width: 550px;
   height: 400px;
   border: none;
-  background-color: #1e1e1e;
+  background-color: var(--surface);
 }
 
 /* Mobile responsiveness adjustments */

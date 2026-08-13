@@ -15,9 +15,12 @@
   <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
 
   <script src="scripts/script.js" defer></script>
+  <script src="scripts/particles.js" defer></script>
 </head>
 
 <body>
+  <canvas id="particles-bg" aria-hidden="true"></canvas>
+
   <header>
     <div class="header">
       <div class="logo">
@@ -29,28 +32,42 @@
       <div class="navbar">
         <a href="codeography.html">Codeography</a>
         <a href="legal.html">Legal</a>
-        <a class="fa fa-github" style="font-size:24px;" target="_blank" href="https://github.com/wriggs12"></a>
-        <a class="fa fa-linkedin" style="font-size:24px;" target="_blank"
-          href="https://www.linkedin.com/in/winstonriggs/"></a>
       </div>
     </div>
   </header>
+
   <main>
     <div class="home">
       <section>
         <div class="bio">
-          <b style="font-size: 40px;">Winston Riggs - NYC Software Developer</b><br><br>
-          An experienced NYC-based software developer specializing in financial systems development,
-          concurrent programming, and quantitative analysis. I build robust trading
-          systems, automated market makers, and financial modeling tools for the modern economy.
+          <div class="bio-text-col">
+            <h1 class="bio-title">I'm <span class="bio-name">Winston Riggs</span></h1>
+            <p class="bio-role">NYC Software Developer</p>
+            <p class="bio-text">I build software for a living. I enjoy creating tangible things on a computer, and am
+              largely driven by my curiousity about the world and the mysteries of our universe. I want to traverse the
+              remote corners of the planet to find out all of its secrets.</p>
 
+            <div class="socials">
+              <a class="fa fa-github" target="_blank" rel="noopener" aria-label="GitHub"
+                href="https://github.com/wriggs12"></a>
+              <a class="fa fa-linkedin" target="_blank" rel="noopener" aria-label="LinkedIn"
+                href="https://www.linkedin.com/in/winstonriggs/"></a>
+              <a class="fa fa-instagram" target="_blank" rel="noopener" aria-label="Instagram"
+                href="https://www.instagram.com/winston_riggs/"></a>
+            </div>
+          </div>
+
+          <!-- <img class="headshot" src="assets/images/headshot.jpg" alt="Winston Riggs"> -->
+          <div class="headshot headshot--placeholder" aria-hidden="true">WR</div>
         </div>
+
         <div class="working">
           <h2>Active Projects</h2>
           <ul>
             <li>Automated Market Maker</li>
           </ul>
         </div>
+
         <div class="todo">
           <h2>TODO</h2>
           <ul>
@@ -60,102 +77,7 @@
             <li>Math Library</li>
           </ul>
         </div>
-        <div class="options">
-          <h2>Options Pricer</h2>
-
-          <form id="calculationForm">
-            <label for="stock_price">Stock Price:</label>
-            <input type="number" id="stock_price" name="stock_price" required step="0.01" placeholder="E.g. $150" />
-
-            <label for="strike_price">Strike Price:</label>
-            <input type="number" id="strike_price" name="strike_price" required step="0.01" placeholder="E.g. $175">
-
-            <label for="time_to_expiration">Time to Expiration:</label>
-            <input type="number" id="time_to_expiration" name="time_to_expiration" required step="0.01"
-              placeholder="E.g. 0.5 (for 6 months)">
-
-            <label for="risk_free_rate">Risk Free Rate:</label>
-            <input type="number" id="risk_free_rate" name="risk_free_rate" required step="0.01"
-              placeholder="E.g. 0.05 (for 5%)">
-
-            <label for="dividend_yield">Dividend Yield:</label>
-            <input type="number" id="dividend_yield" name="dividend_yield" required step="0.01"
-              placeholder="E.g. 0.05 (for 5%)">
-
-            <label for="volatility">Volatility:</label>
-            <input type="number" id="volatility" name="volatility" required step="0.01"
-              placeholder="E.g. 0.05 (for 5%)">
-
-            <div class="form-group">
-              <label for="greeks">Compute Greeks:</label>
-              <select id="include_greeks" name="include_greeks">
-                <option value=1>True</option>
-                <option value=0>False</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="type">Call/Put:</label>
-              <select id="option_type" name="option_type">
-                <option value=1>Call</option>
-                <option value=0>Put</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="model">Model:</label>
-              <select id="model" name="model">
-                <option value="blackScholesPricing">Black Scholes</option>
-                <option value="monteCarloPricing">Monte Carlo</option>
-              </select>
-            </div>
-
-            <input id="option-submit" type="submit" value="Calculate">
-          </form>
-
-          <div id="option-output">
-            <p id="option-price"></p>
-            <p id="option-delta"></p>
-            <p id="option-gamma"></p>
-            <p id="option-theta"></p>
-            <p id="option-vega"></p>
-            <p id="option-rho"></p>
-          </div>
-        </div>
       </section>
-    </div>
-    <div class="stock-widget">
-      <div class="stock-header">
-        <h2>Stock Watchlist</h2>
-        <p id="last-updated"></p>
-      </div>
-
-      <table class="stock-table">
-        <thead>
-          <tr>
-            <th>Symbol</th>
-            <th>Price</th>
-            <th>Change</th>
-            <th>% Change</th>
-            <th>High</th>
-            <th>Low</th>
-          </tr>
-        </thead>
-        <tbody id="stock-data">
-        </tbody>
-      </table>
-    </div>
-<div class="graph-section">
-      <h2>Market Spread Analysis</h2>
-      <div class="graph-grid">
-        <iframe loading="lazy" src="assets/graphs/market_liquidity_vs_market_volatility.html"
-          class="graph-frame"></iframe>
-        <iframe loading="lazy" src="assets/graphs/market_liquidity_vs_net_position.html" class="graph-frame"></iframe>
-        <iframe loading="lazy" src="assets/graphs/market_volatility_vs_net_position.html" class="graph-frame"></iframe>
-        <iframe loading="lazy" src="assets/graphs/risk_factor_vs_market_liquidity.html" class="graph-frame"></iframe>
-        <iframe loading="lazy" src="assets/graphs/risk_factor_vs_market_volatility.html" class="graph-frame"></iframe>
-        <iframe loading="lazy" src="assets/graphs/risk_factor_vs_net_position.html" class="graph-frame"></iframe>
-      </div>
     </div>
   </main>
 </body>
