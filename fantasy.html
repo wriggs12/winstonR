@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Fantasy Waiver Wire - Winston Riggs</title>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Sleeper fantasy football waiver wire analyzer. Ranks free agents by blending projections with snap-share-weighted production.">
+  <meta name="author" content="Winston Riggs">
+
+  <link rel="stylesheet" href="styles/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+
+  <style>
+    /* page-local tokens: --success/--danger in styles.css are self-referential */
+    .ff { --ok: #5fd0a0; --warn: var(--accent); --bad: #ff6b6b; }
+
+    .ff { max-width: 1100px; margin: 0 auto; padding: 24px 16px 80px; }
+    .ff h1 { font-size: 26px; margin: 0 0 6px; color: var(--text-1); }
+    .ff h2 { font-size: 17px; margin: 32px 0 12px; color: var(--brand); }
+    .ff h2 .sub { font-weight: 400; color: var(--text-2); font-size: 13px; margin-left: 8px; }
+    .ff .lede { color: var(--text-2); margin: 0 0 24px; font-size: 14px; }
+
+    .ff .card { background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 18px; }
+    .ff label { display: block; font-size: 13px; color: var(--text-2); margin-bottom: 6px; }
+    .ff input { width: 100%; padding: 11px 13px; font: inherit; font-size: 15px;
+      border-radius: 8px; border: 1px solid var(--border);
+      background: var(--surface-2); color: var(--text-1); }
+    .ff input:focus { outline: 2px solid var(--brand); outline-offset: -1px; }
+    .ff button { font: inherit; cursor: pointer; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--surface-2);
+      color: var(--text-1); padding: 11px 18px; }
+    .ff button.primary { background: var(--brand-deep); border-color: var(--brand-deep);
+      color: var(--bg); font-weight: 700; }
+    .ff button:disabled { opacity: .5; cursor: default; }
+    .ff .row { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+    .ff .row > div { flex: 1; min-width: 220px; }
+
+    .ff .leagues { display: grid; gap: 10px; margin-top: 6px; }
+    .ff .league { display: flex; justify-content: space-between; align-items: center;
+      gap: 14px; text-align: left; width: 100%; padding: 14px 16px; }
+    .ff .league:hover { border-color: var(--brand); }
+    .ff .league .nm { font-weight: 700; color: var(--text-1); }
+    .ff .league .meta { font-size: 12.5px; color: var(--text-2); margin-top: 2px; }
+    .ff .badge { font-size: 11px; padding: 3px 8px; border-radius: 99px;
+      background: var(--surface-2); border: 1px solid var(--border);
+      color: var(--text-2); white-space: nowrap; }
+
+    .ff .scroll { overflow-x: auto; border: 1px solid var(--border);
+      border-radius: 10px; background: var(--surface); }
+    .ff table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    .ff th { text-align: left; font-size: 11px; letter-spacing: .06em;
+      text-transform: uppercase; color: var(--text-2); font-weight: 700;
+      padding: 10px 12px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    .ff td { padding: 9px 12px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    .ff tr:last-child td { border-bottom: 0; }
+    .ff tbody tr:hover { background: var(--surface-2); }
+    .ff .num { text-align: right; font-variant-numeric: tabular-nums; }
+
+    .ff .pos { display: inline-block; min-width: 34px; text-align: center;
+      font-size: 10.5px; font-weight: 700; padding: 2px 0; border-radius: 4px;
+      background: var(--surface-2); border: 1px solid var(--border); color: var(--text-2); }
+    .ff .pos.QB { color: #ff8fa3; } .ff .pos.RB { color: var(--ok); }
+    .ff .pos.WR { color: var(--brand); } .ff .pos.TE { color: var(--accent); }
+    .ff .pos.DEF { color: #b39ddb; }
+    .ff .nm { font-weight: 700; }
+    .ff .good { color: var(--ok); } .ff .warn { color: var(--warn); } .ff .bad { color: var(--bad); }
+    .ff .dim { color: var(--text-2); }
+    .ff .tag { font-size: 10.5px; padding: 1px 6px; border-radius: 4px; margin-left: 6px;
+      border: 1px solid currentColor; background: none; opacity: .85; }
+    .ff .hint { font-size: 12.5px; color: var(--text-2); margin: 8px 0 0; }
+    .ff .err { color: var(--bad); font-size: 13.5px; margin-top: 10px; }
+    .ff .back { background: none; border: 0; color: var(--brand);
+      padding: 0; font-size: 13px; margin-bottom: 14px; }
+    .ff .hidden { display: none; }
+    .ff .bar { height: 5px; background: var(--surface-2); border-radius: 99px;
+      overflow: hidden; margin-top: 14px; }
+    .ff .bar > div { height: 100%; background: var(--brand); width: 0; transition: width .25s; }
+    .ff .pill { display: inline-flex; gap: 6px; align-items: center; font-size: 12.5px;
+      color: var(--text-2); background: var(--surface); border: 1px solid var(--border);
+      border-radius: 99px; padding: 5px 12px; margin: 0 6px 6px 0; }
+    .ff .note { background: var(--surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0;
+      padding: 12px 16px; font-size: 13.5px; color: var(--text-2); margin-top: 12px; }
+    .ff .note b { color: var(--text-1); }
+    .ff .note--plain { border-left-color: var(--border); margin-top: 28px; }
+    .ff .sparks { font-variant-numeric: tabular-nums; color: var(--text-2); font-size: 12.5px; }
+  </style>
+</head>
+
+<body>
+  <canvas id="particles-bg" aria-hidden="true"></canvas>
+
+  <header>
+    <div class="header">
+      <div class="logo">
+        <a href="index.html">
+          <span class="logo_text">> 01010111 01010010</span>
+          <span class="logo_cursor"></span>
+        </a>
+      </div>
+      <div class="navbar">
+        <a href="codeography.html">Codeography</a>
+        <a href="legal.html">Legal</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="ff">
+
+      <!-- ========== STEP 1: USERNAME ========== -->
+      <section id="s-user">
+        <h1>Sleeper Waiver Wire</h1>
+        <p class="lede">Find the best available pickups for your league.</p>
+        <div class="card">
+          <div class="row">
+            <div>
+              <label for="uname">Sleeper username</label>
+              <input id="uname" placeholder="e.g. wriggs12" autocomplete="off" spellcheck="false">
+            </div>
+            <button class="primary" id="go">Find leagues</button>
+          </div>
+          <p class="hint">Your Sleeper display name — not your email.</p>
+          <div class="err hidden" id="uerr"></div>
+        </div>
+      </section>
+
+      <!-- ========== STEP 2: LEAGUE PICKER ========== -->
+      <section id="s-league" class="hidden">
+        <button class="back" id="back1">&larr; Change user</button>
+        <h1 id="uwelcome"></h1>
+        <p class="lede">Pick a league to analyze.</p>
+        <div class="leagues" id="lgs"></div>
+      </section>
+
+      <!-- ========== STEP 3: REPORT ========== -->
+      <section id="s-report" class="hidden">
+        <button class="back" id="back2">&larr; Change league</button>
+        <h1 id="rtitle"></h1>
+        <p class="lede" id="rmeta"></p>
+        <div id="rbody"></div>
+      </section>
+
+      <!-- ========== LOADING ========== -->
+      <section id="s-load" class="hidden">
+        <div class="card">
+          <div id="lmsg">Loading…</div>
+          <div class="bar"><div id="lbar"></div></div>
+          <p class="hint" id="lhint"></p>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script src="scripts/particles.js" defer></script>
+  <script>
+
+const API = 'https://api.sleeper.app/v1';
+const $ = id => document.getElementById(id);
+const show = id => ['s-user','s-league','s-report','s-load']
+  .forEach(s => $(s).classList.toggle('hidden', s !== id));
+
+const get = async (path) => {
+  const r = await fetch(API + path);
+  if (!r.ok) throw new Error(path + ' -> ' + r.status);
+  return r.json();
+};
+// tolerant fetch: missing weeks (future/bye) return {} instead of throwing
+const getSoft = async (path) => { try { return await get(path); } catch { return {}; } };
+
+const progress = (pct, msg, hint='') => {
+  $('lbar').style.width = pct + '%';
+  $('lmsg').textContent = msg;
+  $('lhint').textContent = hint;
+};
+
+/* ---------- players DB: 14MB, so trim + cache for the day ---------- */
+const DB_KEY = 'sleeper_players_v1';
+const idb = {
+  open: () => new Promise((res, rej) => {
+    const r = indexedDB.open('sleeper-waivers', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('kv');
+    r.onsuccess = () => res(r.result);
+    r.onerror = () => rej(r.error);
+  }),
+  get: async k => { try {
+    const db = await idb.open();
+    return await new Promise(res => {
+      const q = db.transaction('kv').objectStore('kv').get(k);
+      q.onsuccess = () => res(q.result); q.onerror = () => res(null);
+    });
+  } catch { return null; } },
+  set: async (k, v) => { try {
+    const db = await idb.open();
+    db.transaction('kv', 'readwrite').objectStore('kv').put(v, k);
+  } catch {} }
+};
+
+async function loadPlayers() {
+  const today = new Date().toISOString().slice(0, 10);
+  const hit = await idb.get(DB_KEY);
+  if (hit && hit.day === today) return hit.data;
+
+  progress(12, 'Downloading player database…', 'About 14 MB — cached for the rest of the day.');
+  const raw = await get('/players/nfl');
+  const trim = {};
+  for (const [id, p] of Object.entries(raw)) {
+    if (!p.position) continue;
+    trim[id] = { n: p.full_name || p.last_name || id, p: p.position,
+                 t: p.team, i: p.injury_status, s: p.status };
+  }
+  await idb.set(DB_KEY, { day: today, data: trim });
+  return trim;
+}
+
+/* ---------- scoring ---------- */
+const scoreLine = (line, settings) => {
+  let t = 0;
+  for (const k in line) {
+    const v = line[k];
+    if (typeof v === 'number' && settings[k] != null) t += settings[k] * v;
+  }
+  return t;
+};
+const r1 = n => Math.round(n * 10) / 10;
+// projections: skip zeros, which are bye weeks
+const avgPos = arr => { const g = arr.filter(v => v > 0);
+  return g.length ? g.reduce((a, b) => a + b, 0) / g.length : 0; };
+// actuals: average over weeks the player was ON THE FIELD. A 0 while playing is a
+// real bust game and must count; only genuine DNPs are excluded. Dropping zeros
+// here would let one big week in an otherwise empty season set a player's value.
+const avgPlayed = (vals, played) => {
+  const g = vals.filter((_, i) => played[i]);
+  return g.length ? g.reduce((a, b) => a + b, 0) / g.length : 0; };
+
+/* ---------- STEP 1 ---------- */
+let USER = null;
+async function findLeagues() {
+  const name = $('uname').value.trim();
+  if (!name) return;
+  $('uerr').classList.add('hidden');
+  $('go').disabled = true;
+  try {
+    const u = await get('/user/' + encodeURIComponent(name));
+    if (!u || !u.user_id) throw new Error('not found');
+    USER = u;
+    const st = await get('/state/nfl');
+    let lgs = await get(`/user/${u.user_id}/leagues/nfl/${st.season}`);
+    if (!lgs.length) lgs = await get(`/user/${u.user_id}/leagues/nfl/${st.season - 1}`);
+    if (!lgs.length) throw new Error('no leagues');
+    $('uwelcome').textContent = u.display_name;
+    $('lgs').innerHTML = '';
+    lgs.forEach(l => {
+      const b = document.createElement('button');
+      b.className = 'card league';
+      b.innerHTML = `<div><div class="nm">${esc(l.name)}</div>
+        <div class="meta">${l.total_rosters} teams · ${l.season} · ${fmtScoring(l)}</div></div>
+        <span class="badge">${esc(l.status.replace(/_/g, ' '))}</span>`;
+      b.onclick = () => buildReport(l, st);
+      $('lgs').appendChild(b);
+    });
+    show('s-league');
+  } catch (e) {
+    $('uerr').textContent = /not found|no leagues/.test(e.message)
+      ? `No ${new Date().getFullYear()} NFL leagues found for "${name}". Check the spelling.`
+      : 'Could not reach Sleeper: ' + e.message;
+    $('uerr').classList.remove('hidden');
+  } finally { $('go').disabled = false; }
+}
+const fmtScoring = l => {
+  const r = l.scoring_settings?.rec ?? 0;
+  return r >= 1 ? 'Full PPR' : r > 0 ? 'Half PPR' : 'Standard';
+};
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+/* ---------- STEP 3: the analysis ---------- */
+async function buildReport(league, state) {
+  show('s-load');
+  try {
+    const week = state.week || 1;
+    const SC = league.scoring_settings;
+
+    progress(6, 'Loading league…');
+    const [rosters, users, players] = await Promise.all([
+      get(`/league/${league.league_id}/rosters`),
+      get(`/league/${league.league_id}/users`),
+      loadPlayers()
+    ]);
+
+    const me = rosters.find(r => r.owner_id === USER.user_id);
+    if (!me) throw new Error('You have no roster in this league.');
+    const nameOf = Object.fromEntries(users.map(u => [u.user_id, u.display_name]));
+
+    // past weeks (actuals) + next 5 weeks (projections)
+    const past = []; for (let w = 1; w < week; w++) past.push(w);
+    const future = []; for (let w = week; w < week + 5; w++) future.push(w);
+
+    progress(45, 'Loading stats and projections…', `Weeks 1–${week + 4}`);
+    const [statsArr, projArr, matchArr, trendArr] = await Promise.all([
+      Promise.all(past.map(w => getSoft(`/stats/nfl/regular/${league.season}/${w}`))),
+      Promise.all(future.map(w => getSoft(`/projections/nfl/regular/${league.season}/${w}`))),
+      Promise.all(past.map(w => getSoft(`/league/${league.league_id}/matchups/${w}`))),
+      getSoft('/players/nfl/trending/add?lookback_hours=48&limit=200')
+    ]);
+    const stats = Object.fromEntries(past.map((w, i) => [w, statsArr[i]]));
+    const proj  = Object.fromEntries(future.map((w, i) => [w, projArr[i]]));
+    const trend = {};
+    if (Array.isArray(trendArr)) trendArr.forEach(t => trend[t.player_id] = t.count);
+
+    progress(80, 'Crunching numbers…');
+
+    const rostered = new Set();
+    rosters.forEach(r => (r.players || []).forEach(p => rostered.add(p)));
+
+    // Who competes with whom for touches: receivers share targets, backs share carries.
+    const GROUP = { WR: 'REC', TE: 'REC', RB: 'RUSH' };
+    const usage = (w, id) => {
+      const st = stats[w]?.[id]; if (!st) return 0;
+      return (st.rec_tgt || 0) + (st.rush_att || 0);
+    };
+    // Was this player's best week propped up by a teammate who was out and is
+    // coming back? Returns that teammate, or null.
+    const vacancy = (pid, p, act, played) => {
+      const grp = GROUP[p.p]; if (!grp) return null;
+      // the week he did his damage
+      let bw = -1, bv = 0;
+      act.forEach((v, i) => { if (played[i] && v > bv) { bv = v; bw = i; } });
+      if (bw < 0 || bv < 10) return null;
+      const week = past[bw];
+      // did his own usage actually spike that week, or is he just consistently good?
+      const mine = usage(week, pid);
+      const other = past.filter((_, i) => i !== bw && played[i])
+        .map(w => usage(w, pid));
+      const base = other.length ? Math.max(...other) : 0;
+      if (!(mine >= base * 1.8 && mine - base >= 3)) return null;   // no real spike
+      // find a same-group teammate who sat that week, had usage otherwise,
+      // and is not on IR -- i.e. the competition is coming back
+      for (const [id, q] of Object.entries(players)) {
+        if (id === pid || q.t !== p.t || GROUP[q.p] !== grp) continue;
+        if (/IR|Suspend/i.test(q.i || '')) continue;               // not returning soon
+        if (stats[week]?.[id]?.off_snp) continue;                  // he played, no vacancy
+        const elsewhere = past.filter(w => w !== week).map(w => usage(w, id));
+        if (elsewhere.some(u => u >= 4)) return { name: q.n, week };
+      }
+      return null;
+    };
+
+    // per-player view
+    const view = pid => {
+      const p = players[pid] || {};
+      const act = past.map(w => scoreLine(stats[w]?.[pid] || {}, SC));
+      const pr  = future.map(w => scoreLine(proj[w]?.[pid] || {}, SC));
+      const played = past.map(w => !!(stats[w]?.[pid]?.off_snp));
+      // snap share + opportunity from the most recent completed week
+      const last = stats[past[past.length - 1]]?.[pid] || {};
+      const snap = last.tm_off_snp ? Math.round(last.off_snp / last.tm_off_snp * 100) : null;
+      const opp = (last.rec_tgt || 0) + (last.rush_att || 0);
+      const ros = avgPos(pr), actAvg = avgPlayed(act, played);
+      // Sleeper projections lag breakout rookies badly, so blend in what a player
+      // has actually done -- but only when a real snap share says the role is theirs,
+      // otherwise we'd be chasing one-week touchdown luck.
+      // Snap share says a player was on the field; it does NOT say who he was
+      // competing with for the ball. A receiver can hold 90% of snaps all year and
+      // only see volume in the one week the team's target hog sat out. Find that.
+      const vac = vacancy(pid, p, act, played);
+      const credit = snap != null && snap >= 60 ? (vac ? 0.15 : 0.35) : 0;
+      const earned = ros * (1 - credit) + actAvg * credit;
+      const hurt = /Out|IR|Doubtful|Suspend/i.test(p.i || '') ? 0.5
+                 : /Questionable/i.test(p.i || '') ? 0.9 : 1;
+      return { pid, name: p.n, pos: p.p, team: p.t, inj: p.i,
+               act, pr, ros, actAvg, score: earned * hurt, snap, opp, vac,
+               adds: trend[pid] || 0 };
+    };
+
+    const SKILL = ['QB', 'RB', 'WR', 'TE', 'DEF'];
+    const freeAgents = Object.keys(players)
+      .filter(id => !rostered.has(id))
+      .filter(id => SKILL.includes(players[id].p))
+      .filter(id => players[id].t)
+      .filter(id => !players[id].s || players[id].s === 'Active')
+      .map(view)
+      .filter(v => v.ros > 0 || v.actAvg > 0)
+      .sort((a, b) => b.score - a.score);
+
+    const myTeam = (me.players || []).map(view)
+      .sort((a, b) => b.score - a.score);
+
+    // an add is only worth it if it beats someone you'd have to drop
+    const droppable = myTeam.filter(p => !(me.starters || []).includes(p.pid))
+      .sort((a, b) => a.score - b.score);
+    const bar = droppable.length ? droppable[0].score : 0;
+
+    // lineup leaks: optimal vs actual for each completed week
+    const slots = league.roster_positions.filter(s => s !== 'BN');
+    const leaks = past.map((w, i) => {
+      const M = matchArr[i];
+      if (!Array.isArray(M)) return null;
+      const mine = M.find(m => m.roster_id === me.roster_id);
+      if (!mine || !mine.players_points) return null;
+      const opp = M.find(m => m.matchup_id === mine.matchup_id && m.roster_id !== me.roster_id);
+      const pts = mine.players_points;
+      const pool = Object.keys(pts).map(id =>
+        ({ id, pos: players[id]?.p, name: players[id]?.n || id, v: pts[id] }));
+      const used = new Set(); let best = 0;
+      const take = ok => {
+        const c = pool.filter(p => !used.has(p.id) && ok(p.pos))
+          .sort((a, b) => b.v - a.v)[0];
+        if (c) { used.add(c.id); best += c.v; return c; }
+      };
+      slots.filter(s => s !== 'FLEX' && s !== 'SUPER_FLEX' && s !== 'REC_FLEX')
+        .forEach(s => take(p => p === s));
+      slots.filter(s => s === 'FLEX').forEach(() =>
+        take(p => ['RB', 'WR', 'TE'].includes(p)));
+      slots.filter(s => s === 'SUPER_FLEX').forEach(() =>
+        take(p => ['QB', 'RB', 'WR', 'TE'].includes(p)));
+      const started = new Set(mine.starters || []);
+      const missed = pool.filter(p => !started.has(p.id))
+        .sort((a, b) => b.v - a.v).slice(0, 3);
+      return { w, actual: mine.points || 0, best, opp: opp?.points ?? null,
+               oppName: opp ? nameOf[rosters.find(r => r.roster_id === opp.roster_id)?.owner_id] : null,
+               missed };
+    }).filter(Boolean);
+
+    render(league, state, me, myTeam, droppable, freeAgents, leaks, bar, rosters, nameOf);
+    progress(100, 'Done');
+    show('s-report');
+  } catch (e) {
+    show('s-report');
+    $('rtitle').textContent = 'Something went wrong';
+    $('rmeta').textContent = e.message;
+    $('rbody').innerHTML = '';
+  }
+}
+
+/* ---------- rendering ---------- */
+const posCell = p => `<span class="pos ${p.pos}">${p.pos}</span>`;
+const injTag = p => p.inj ? ` <span class="tag ${/Out|IR|Doubtful/i.test(p.inj) ? 'bad' : 'warn'}">${esc(p.inj)}</span>` : '';
+const nameCell = p => `<span class="nm">${esc(p.name)}</span>
+  <span class="dim"> ${esc(p.team || '')}</span>${injTag(p)}`;
+
+function table(head, rows) {
+  return `<div class="scroll"><table><thead><tr>${head}</tr></thead>
+    <tbody>${rows.join('')}</tbody></table></div>`;
+}
+
+function render(league, state, me, myTeam, droppable, fas, leaks, bar, rosters, nameOf) {
+  const s = me.settings;
+  $('rtitle').textContent = league.name;
+  $('rmeta').innerHTML = `Week ${state.week} · ${s.wins}-${s.losses}` +
+    ` · ${s.fpts}.${s.fpts_decimal || 0} PF · ` +
+    `${league.total_rosters} teams · ${fmtScoring(league)}`;
+
+  const starterSet = new Set(me.starters || []);
+  const waiverFaab = league.settings.waiver_type === 2;
+  const pills = `
+    <span class="pill">Waivers: ${waiverFaab
+      ? `FAAB · $${league.settings.waiver_budget - (s.waiver_budget_used || 0)} left`
+      : `priority #${s.waiver_position} of ${league.total_rosters}`}</span>
+    <span class="pill">Roster ${(me.players || []).length}/${league.roster_positions.length}</span>
+    <span class="pill">Lineup: ${league.roster_positions.filter(p => p !== 'BN').join(' / ')}</span>`;
+
+  const byPos = {};
+  fas.forEach(f => { (byPos[f.pos] ||= []).push(f); });
+
+  /* --- the headline: positional upgrades only --------------------------
+     Ranking free agents globally floods this with QBs, because a startable
+     QB always out-projects a WR3. The real question is per position: does
+     the best available P beat the worst P you already roster? --------- */
+  const FLEXABLE = ['RB', 'WR', 'TE'];
+  const mineByPos = {};
+  myTeam.forEach(p => { (mineByPos[p.pos] ||= []).push(p); });
+  Object.values(mineByPos).forEach(a => a.sort((x, y) => y.ros - x.ros));
+
+  const healthy = f => !/Out|IR|Doubtful|Suspend/i.test(f.inj || '');
+  const spent = new Set();   // a player can only be dropped once
+  const upgrades = ['RB', 'WR', 'TE', 'QB', 'DEF'].map(pos => {
+    const fa = (byPos[pos] || []).filter(healthy)[0];
+    if (!fa) return null;
+    const mine = mineByPos[pos] || [];
+    // the roster spot this player would actually take: your worst at the position
+    const benchmark = mine.length ? mine[mine.length - 1] : null;
+    const gain = fa.score - (benchmark ? benchmark.score : 0);
+    return { fa, benchmark, gain };
+  }).filter(u => u && u.gain > 0.5)
+    .sort((a, b) => b.gain - a.gain)
+    .map(u => {
+      // prefer cutting the guy he replaces, but never a starter, never twice
+      const pick = (u.benchmark && !starterSet.has(u.benchmark.pid) && !spent.has(u.benchmark.pid))
+        ? u.benchmark
+        : droppable.find(d => !spent.has(d.pid));
+      if (!pick) return null;
+      spent.add(pick.pid);
+      // gain stays the same-position comparison -- a QB's score is not
+      // comparable to an RB's, so the cut player only frees the roster spot
+      return { ...u, drop: pick, swap: pick.pid === u.benchmark?.pid };
+    }).filter(Boolean);
+
+  const topSection = upgrades.length ? `
+    <h2>Recommended moves<span class="sub">upgrade is measured against your weakest player at that same position</span></h2>` +
+    table(`<th>Add</th><th class="num">Value</th><th></th><th>Drop</th><th class="num">Value</th><th class="num">Upgrade</th><th></th>`,
+      upgrades.map(u => `<tr>
+          <td>${posCell(u.fa)} ${nameCell(u.fa)}</td>
+          <td class="num good">${r1(u.fa.score)}</td>
+          <td class="dim">for</td>
+          <td>${posCell(u.drop)} ${nameCell(u.drop)}</td>
+          <td class="num">${r1(u.drop.score)}</td>
+          <td class="num good">+${r1(u.gain)}</td>
+          <td class="dim">${u.fa.vac
+            ? `<span class="warn">Volume came in wk ${u.fa.vac.week} with ${esc(u.fa.vac.name)} out — role may close</span>`
+            : (u.gain >= 3 ? 'Clear upgrade'
+              : u.gain >= 1.5 ? 'Worth the move' : 'Marginal')
+              + (u.swap ? '' : ` at ${u.fa.pos} — drop just frees the spot`)}</td></tr>`))
+    : `<h2>Recommended moves</h2><div class="note">Nothing on the wire beats what you
+       already roster at any position. <b>Hold.</b></div>`;
+
+  /* --- lineup leaks --- */
+  const totalLeak = leaks.reduce((a, l) => a + (l.best - l.actual), 0);
+  const leakSection = leaks.length ? `
+    <h2>Lineup leaks<span class="sub">points left on your bench</span></h2>` +
+    table(`<th>Week</th><th>Result</th><th class="num">Scored</th><th class="num">Optimal</th>
+           <th class="num">Left on bench</th><th>Biggest miss</th>`,
+      leaks.map(l => {
+        const won = l.opp != null && l.actual > l.opp;
+        const gap = l.best - l.actual;
+        return `<tr>
+          <td>Week ${l.w}</td>
+          <td class="${won ? 'good' : 'bad'}">${l.opp != null
+            ? (won ? 'W' : 'L') + ` ${r1(l.actual)}–${r1(l.opp)}` : '—'}
+            <span class="dim">${l.oppName ? 'vs ' + esc(l.oppName) : ''}</span></td>
+          <td class="num">${r1(l.actual)}</td>
+          <td class="num">${r1(l.best)}</td>
+          <td class="num ${gap > 10 ? 'bad' : gap > 4 ? 'warn' : 'dim'}">${gap > 0.05 ? '-' + r1(gap) : '0'}</td>
+          <td class="sparks">${l.missed.map(m => `${esc(m.name)} ${r1(m.v)}`).join(' · ')}</td></tr>`;
+      })) +
+    (totalLeak > 8 ? `<div class="note"><b>${r1(totalLeak)} points</b> left on your bench
+       so far — ${r1(totalLeak / leaks.length)}/week. No waiver add fixes a start/sit problem.</div>` : '')
+    : '';
+
+  /* --- your roster --- */
+  const rosterSection = `<h2>Your roster<span class="sub">sorted by rest-of-season projection</span></h2>` +
+    table(`<th>Player</th><th class="num">Value</th><th class="num">Proj/wk</th><th class="num">Actual/wk</th>
+           <th class="num">Snap%</th><th>Status</th>`,
+      myTeam.map(p => `<tr>
+        <td>${posCell(p)} ${nameCell(p)}</td>
+        <td class="num">${r1(p.score) || '—'}</td>
+        <td class="num dim">${r1(p.ros) || '—'}</td>
+        <td class="num">${r1(p.actAvg) || '—'}</td>
+        <td class="num">${p.snap != null ? p.snap + '%' : '—'}</td>
+        <td class="dim">${starterSet.has(p.pid) ? 'Starter'
+          : (me.reserve || []).includes(p.pid) ? 'IR' : 'Bench'}</td></tr>`));
+
+  /* --- drop candidates --- */
+  const dropSection = droppable.length ? `
+    <h2>Drop candidates<span class="sub">weakest bench spots, worst first</span></h2>` +
+    table(`<th>Player</th><th class="num">Value</th><th class="num">Proj/wk</th><th class="num">Actual/wk</th><th></th>`,
+      droppable.slice(0, 5).map(p => `<tr>
+        <td>${posCell(p)} ${nameCell(p)}</td>
+        <td class="num">${r1(p.score) || '—'}</td>
+        <td class="num dim">${r1(p.ros) || '—'}</td>
+        <td class="num">${r1(p.actAvg) || '—'}</td>
+        <td class="dim">${/Out|IR/i.test(p.inj || '') ? 'IR-eligible — stash, do not cut' : ''}</td>
+      </tr>`)) : '';
+
+  $('rbody').innerHTML = pills + topSection + leakSection +
+                         dropSection + rosterSection +
+    `<div class="note note--plain">
+      <b>Value</b> blends Sleeper's projection with what a player has actually produced,
+      crediting production only above a 60% snap share (below that it's usually touchdown
+      luck), discounting injuries, and heavily discounting volume that arrived only while a
+      teammate was out. Weeks a player suited up and busted count against him; only true
+      DNPs are skipped. Sleeper's raw projections lag breakout rookies, which
+      is why <b>Proj/wk</b> is shown next to it.</div>`;
+}
+
+
+/* ---------- wiring ---------- */
+$('go').onclick = findLeagues;
+$('uname').onkeydown = e => { if (e.key === 'Enter') findLeagues(); };
+$('back1').onclick = () => show('s-user');
+$('back2').onclick = () => show('s-league');
+show('s-user');
+$('uname').focus();
+  </script>
+</body>
+
+</html>
