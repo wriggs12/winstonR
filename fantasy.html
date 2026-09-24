@@ -349,6 +349,372 @@
       color: var(--text-1);
     }
 
+    .ff .tradecols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .ff select {
+      width: 100%;
+      padding: 9px 11px;
+      font: inherit;
+      font-size: 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text-1);
+      margin-bottom: 8px;
+    }
+
+    /* grid items default to min-width:auto, so a long player row would stop the
+       column shrinking and push the card past the viewport on a phone */
+    .ff .tradecols>div {
+      min-width: 0;
+    }
+
+    .ff .picklist {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface-2);
+      padding: 4px;
+    }
+
+    .ff .pick {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      text-align: left;
+      padding: 7px 9px;
+      margin: 0;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: none;
+      font-size: 13px;
+    }
+
+    .ff .pick {
+      overflow: hidden;
+      white-space: nowrap;
+      min-width: 0;
+    }
+
+    .ff .pick>.num {
+      margin-left: auto;
+      flex: none;
+    }
+
+    .ff .pick:hover {
+      border-color: var(--border);
+    }
+
+    .ff .pick.on {
+      background: rgba(33, 158, 188, 0.18);
+      border-color: var(--brand-deep);
+    }
+
+    @media (max-width: 576px) {
+      .ff .tradecols { grid-template-columns: 1fr; }
+    }
+
+    /* ---------- charts ----------------------------------------------------
+       Marks are HTML, not SVG: a viewBox would scale label text down to ~5px
+       on a 320px phone. Colours validated against the card surface #161d24 --
+       diverging blue/red passes all six checks; the dumbbell pair is one hue,
+       two ordinal steps (L* 0.622 -> 0.764), both above 3:1. ------------- */
+    .ff {
+      --c-mark: #3987e5;
+      /* blue 400  4.67:1 */
+      --c-mark-2: #86b6ef;
+      /* blue 250  8.06:1 */
+      --c-neg: #e66767;
+      /* red       5.26:1 */
+      --c-mute: #6b7c8a;
+      /* de-emphasis 3.95:1 */
+      --c-grid: #29363f;
+    }
+
+    .ff .chart {
+      margin: 14px 0 6px;
+    }
+
+    .ff .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      font-size: 12px;
+      color: var(--text-2);
+      margin-bottom: 12px;
+    }
+
+    .ff .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ff .key {
+      width: 10px;
+      height: 10px;
+      border-radius: 99px;
+      flex: none;
+    }
+
+    .ff .key.rect {
+      width: 12px;
+      height: 10px;
+      border-radius: 2px;
+    }
+
+    /* --- horizontal bars (roster) --- */
+    /* widest roster name measures 137px, so the column has to clear that or
+       most rows ellipsize; the plot is capped so 16 short values don't stretch
+       into 900px bars on a wide screen */
+    .ff .plot {
+      max-width: 660px;
+    }
+
+    .ff .brow {
+      display: grid;
+      grid-template-columns: minmax(0, 122px) 1fr;
+      align-items: center;
+      gap: 10px;
+      padding: 3px 0;
+    }
+
+    .ff .bname {
+      font-size: 12px;
+      color: var(--text-2);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .ff .callout {
+      font-size: 12px;
+      color: var(--text-2);
+      margin: 0 0 10px;
+    }
+
+    .ff .callout b {
+      color: var(--text-1);
+      font-weight: 700;
+    }
+
+    @media (max-width: 576px) {
+      .ff .brow { grid-template-columns: minmax(0, 104px) 1fr; }
+      .ff .dbrow { grid-template-columns: minmax(0, 48px) 1fr; }
+    }
+
+    .ff .btrack {
+      height: 14px;
+      position: relative;
+    }
+
+    /* NOT .bar -- that class is the loading progress bar further up this sheet,
+       and its margin-top pushed every chart mark a full row out of line. */
+    .ff .vbar {
+      position: absolute;
+      inset: 0 auto 0 0;
+      height: 14px;
+      /* 4px rounded data-end, square at the baseline */
+      border-radius: 0 4px 4px 0;
+      background: var(--c-mute);
+    }
+
+    .ff .vbar.on {
+      background: var(--c-mark);
+    }
+
+    .ff .bval {
+      font-size: 12px;
+      text-align: right;
+      color: var(--text-2);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* --- dumbbell (scored vs best possible) --- */
+    .ff .dbrow {
+      display: grid;
+      grid-template-columns: minmax(0, 58px) 1fr;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 0;
+    }
+
+    .ff .dbtrack {
+      position: relative;
+      height: 16px;
+    }
+
+    .ff .dbline {
+      position: absolute;
+      top: 7px;
+      height: 2px;
+      border-radius: 2px;
+      background: var(--c-mute);
+    }
+
+    .ff .dbdot {
+      position: absolute;
+      top: 3px;
+      width: 10px;
+      height: 10px;
+      margin-left: -5px;
+      border-radius: 99px;
+      /* 2px surface ring keeps overlapping dots legible */
+      box-shadow: 0 0 0 2px var(--surface);
+    }
+
+    .ff .dbdot.a {
+      background: var(--c-mark);
+    }
+
+    .ff .dbdot.b {
+      background: var(--c-mark-2);
+    }
+
+    /* the mark is small; the hit target must not be */
+    .ff .dbdot::after,
+    .ff .vbar::after,
+    .ff .dvbar::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      height: 24px;
+      transform: translateY(-50%);
+    }
+
+    .ff .dbdot::after {
+      left: 50%;
+      width: 24px;
+      margin-left: -12px;
+    }
+
+    .ff .vbar::after,
+    .ff .dvbar::after {
+      left: 0;
+      right: 0;
+    }
+
+    .ff .dblab {
+      position: absolute;
+      top: -1px;
+      font-size: 11px;
+      color: var(--text-2);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    /* --- diverging bars (trade deltas) --- */
+    .ff .dvrow {
+      display: grid;
+      grid-template-columns: minmax(0, 58px) 1fr 52px;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 0;
+    }
+
+    .ff .dvtrack {
+      position: relative;
+      height: 14px;
+    }
+
+    .ff .dvzero {
+      position: absolute;
+      left: 50%;
+      top: -2px;
+      bottom: -2px;
+      width: 1px;
+      background: var(--c-grid);
+    }
+
+    .ff .dvbar {
+      position: absolute;
+      top: 0;
+      height: 14px;
+      background: var(--c-mark);
+    }
+
+    .ff .dvbar.pos {
+      border-radius: 0 4px 4px 0;
+    }
+
+    .ff .dvbar.neg {
+      border-radius: 4px 0 0 4px;
+      background: var(--c-neg);
+    }
+
+    .ff .axis {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-2);
+      border-top: 1px solid var(--c-grid);
+      padding-top: 4px;
+      margin-top: 6px;
+    }
+
+    .ff .tip {
+      position: fixed;
+      z-index: 200;
+      pointer-events: none;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 7px 10px;
+      font-size: 12px;
+      color: var(--text-2);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, .45);
+      max-width: 240px;
+    }
+
+    .ff .tip b {
+      color: var(--text-1);
+      font-size: 14px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .ff [data-tip]:hover,
+    .ff [data-tip]:focus-visible {
+      filter: brightness(1.18);
+      outline: none;
+    }
+
+    .ff .tstats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(88px, 1fr));
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .ff .tstat {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+
+    .ff .tstat .k {
+      display: block;
+      font-size: 10.5px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--text-2);
+    }
+
+    .ff .tstat .v {
+      display: block;
+      font-size: 18px;
+      margin-top: 2px;
+    }
+
+    .ff .tverdict {
+      margin: 10px 0 0;
+      font-size: 14px;
+    }
+
     .ff .note--plain {
       border-left-color: var(--border);
       margin-top: 28px;
@@ -436,6 +802,7 @@
   <script>
 
     const API = 'https://api.sleeper.app/v1';
+let TRADE = null;   // set by buildReport; drives the trade evaluator
     const $ = id => document.getElementById(id);
     const show = id => ['s-user', 's-league', 's-report', 's-load']
       .forEach(s => $(s).classList.toggle('hidden', s !== id));
@@ -602,6 +969,34 @@
         const rostered = new Set();
         rosters.forEach(r => (r.players || []).forEach(p => rostered.add(p)));
 
+        // Which positions each lineup slot accepts.
+        const SLOT_OK = {
+          QB: p => p === 'QB', RB: p => p === 'RB', WR: p => p === 'WR',
+          TE: p => p === 'TE', DEF: p => p === 'DEF', K: p => p === 'K',
+          FLEX: p => ['RB', 'WR', 'TE'].includes(p),
+          REC_FLEX: p => ['WR', 'TE'].includes(p),
+          SUPER_FLEX: p => ['QB', 'RB', 'WR', 'TE'].includes(p)
+        };
+        // Best legal starting lineup from a pool. Dedicated slots fill before flex
+        // ones, so a flex never takes a player that a fixed slot still needs.
+        const bestLineup = (pool, slots) => {
+          const used = new Set();
+          let total = 0;
+          const order = [...slots].sort(
+            (a, b) => (/FLEX/.test(a) ? 1 : 0) - (/FLEX/.test(b) ? 1 : 0));
+          for (const slot of order) {
+            const ok = SLOT_OK[slot];
+            if (!ok) continue;
+            let best = null;
+            pool.forEach((p, i) => {
+              if (used.has(i) || !ok(p.pos)) return;
+              if (!best || p.v > best.v) best = { i, v: p.v };
+            });
+            if (best) { used.add(best.i); total += best.v; }
+          }
+          return total;
+        };
+        
         // Who competes with whom for touches: receivers share targets, backs share carries.
         const GROUP = { WR: 'REC', TE: 'REC', RB: 'RUSH' };
         const usage = (w, id) => {
@@ -715,6 +1110,8 @@
           };
         }).filter(Boolean);
 
+        TRADE = { me, rosters, nameOf, view,
+                  slots: league.roster_positions.filter(p => p !== 'BN'), bestLineup };
         render(league, state, me, myTeam, droppable, freeAgents, leaks, bar, rosters, nameOf);
         progress(100, 'Done');
         show('s-report');
@@ -727,7 +1124,229 @@
     }
 
     /* ---------- rendering ---------- */
-    const posCell = p => `<span class="pos ${p.pos}">${p.pos}</span>`;
+    const giveSet = new Set(), getSet = new Set();
+
+function wireTrade() {
+  const teamSel = $('t-team');
+  if (!teamSel || !TRADE) return;
+  const { me, rosters, view, slots, bestLineup } = TRADE;
+
+  const paintGet = () => {
+    const r = rosters.find(x => x.roster_id === +teamSel.value);
+    const list = (r.players || []).map(view).sort((a, b) => b.score - a.score);
+    $('t-get').innerHTML = list.map(p =>
+      `<button class="pick${getSet.has(p.pid) ? ' on' : ''}" type="button" data-pid="${p.pid}">` +
+      `${posCell(p)} ${nameCell(p)}<span class="num dim">${r1(p.score)}</span></button>`).join('');
+  };
+
+  const evaluate = () => {
+    const give = [...giveSet], get = [...getSet];
+    if (!give.length && !get.length) {
+      $('t-result').innerHTML =
+        '<p class="hint">Pick at least one player to see how the deal grades.</p>';
+      return;
+    }
+    const held = (me.players || []).filter(p => !giveSet.has(p));
+    const pool = ids => ids.map(view).map(p => ({ pos: p.pos, v: p.score }));
+    const before = bestLineup(pool(me.players || []), slots);
+    const after = bestLineup(pool([...held, ...get]), slots);
+    const delta = after - before;
+    // the lineup number ignores anyone who is not starting, so track raw swing too
+    const depth = get.map(view).reduce((a, p) => a + p.score, 0)
+                - give.map(view).reduce((a, p) => a + p.score, 0);
+    const thin = Math.abs(delta) < 1 && depth < -2;
+    const v = thin ? ['warn', 'Starters unchanged, but you lose depth']
+      : delta >= 3 ? ['good', 'Accept — clear lineup gain']
+      : delta >= 1 ? ['good', 'Slight gain']
+      : delta > -1 ? ['dim', 'Roughly even']
+      : delta > -3 ? ['warn', 'Slight loss']
+      : ['bad', 'Decline — costs you starting points'];
+    // Tiles rather than a table: five columns cannot fit a phone, and a
+    // one-row table only ever scrolled or overflowed. These reflow instead.
+    const tile = (k, val, cls = '') =>
+      `<div class="tstat"><span class="k">${k}</span>` +
+      `<span class="v ${cls}">${val}</span></div>`;
+    $('t-result').innerHTML =
+      `<div class="tstats">` +
+      tile('Lineup now', r1(before)) +
+      tile('After', r1(after)) +
+      tile('Lineup', `${delta >= 0 ? '+' : ''}${delta.toFixed(1)}`, v[0]) +
+      tile('Depth', `${depth >= 0 ? '+' : ''}${depth.toFixed(1)}`, depth < -2 ? 'warn' : 'dim') +
+      `</div>` +
+      chartDelta([
+        { k: 'Lineup', v: delta, note: 'change to your best starting lineup' },
+        { k: 'Depth', v: depth, note: 'raw value swing, starters or not' }
+      ]) +
+      `<p class="tverdict ${v[0]}">${v[1]}</p>` +
+      (thin ? `<div class="note"><b>Lineup</b> counts only players who crack your best
+        starting lineup, so this reads flat — but you would be ${r1(-depth)} points of
+        bench value thinner for injuries and byes.</div>` : '');
+  };
+
+  const toggle = (box, set) => box.addEventListener('click', e => {
+    const b = e.target.closest('.pick');
+    if (!b) return;
+    const id = b.dataset.pid;
+    set.has(id) ? set.delete(id) : set.add(id);
+    b.classList.toggle('on', set.has(id));
+    evaluate();
+  });
+  toggle($('t-give'), giveSet);
+  toggle($('t-get'), getSet);
+  // A trade is with one team. Without this, picks from a previously selected
+  // team stay in getSet -- invisible in the list, but still counted in the grade.
+  teamSel.addEventListener('change', () => { getSet.clear(); paintGet(); evaluate(); });
+  paintGet();
+  evaluate();
+}
+
+/* ---------- charts ----------
+   Forms picked by the data's job (see the report for which):
+   - weekly scored vs best possible -> dumbbell, one hue / two ordinal steps
+   - roster value                   -> horizontal bars, emphasis (starter vs bench)
+   - trade deltas                   -> diverging bars around a zero baseline
+   Every chart sits beside the table that carries the same numbers, so the
+   hover layer enhances and never gates. ------------------------------- */
+
+// Tooltip text comes from API data, so it is written with textContent only.
+let TIPEL = null;
+function showTip(el, x, y) {
+  if (!TIPEL) {
+    TIPEL = document.createElement('div');
+    TIPEL.className = 'tip';
+    document.querySelector('.ff').appendChild(TIPEL);
+  }
+  TIPEL.textContent = '';
+  const v = document.createElement('b');
+  v.textContent = el.dataset.tipValue || '';
+  const k = document.createElement('div');
+  k.textContent = el.dataset.tip || '';
+  TIPEL.append(k, v);
+  if (el.dataset.tipExtra) {
+    const e = document.createElement('div');
+    e.textContent = el.dataset.tipExtra;
+    TIPEL.appendChild(e);
+  }
+  TIPEL.style.display = 'block';
+  const w = TIPEL.offsetWidth, h = TIPEL.offsetHeight;
+  TIPEL.style.left = Math.max(6, Math.min(x + 14, innerWidth - w - 6)) + 'px';
+  TIPEL.style.top = Math.max(6, y - h - 10) + 'px';
+}
+function hideTip() { if (TIPEL) TIPEL.style.display = 'none'; }
+
+function wireTips(root) {
+  if (!root) return;
+  root.addEventListener('pointermove', e => {
+    const m = e.target.closest('[data-tip]');
+    m ? showTip(m, e.clientX, e.clientY) : hideTip();
+  });
+  root.addEventListener('pointerleave', hideTip);
+  root.addEventListener('focusin', e => {
+    const m = e.target.closest('[data-tip]');
+    if (!m) return;
+    const b = m.getBoundingClientRect();
+    showTip(m, b.left + b.width / 2, b.top);
+  });
+  root.addEventListener('focusout', hideTip);
+}
+
+// Weekly: what you scored vs the best your roster could have scored.
+function chartWeekly(leaks) {
+  if (leaks.length < 1) return '';
+  // Headroom so the right-hand dot never reaches the edge: its value label rides
+  // just outside the mark, and a clipped label is worse than no label at all.
+  const max = Math.max(...leaks.map(l => l.best)) * 1.3;
+  const pct = v => (v / max * 100);
+  const rows = leaks.map(l => {
+    const a = pct(l.actual), b = pct(l.best);
+    return `<div class="dbrow">
+      <span class="bname">Week ${l.w}</span>
+      <div class="dbtrack">
+        <span class="dbline" style="left:${a}%;width:${Math.max(0, b - a)}%"></span>
+        <span class="dbdot a" tabindex="0" style="left:${a}%"
+          data-tip="Week ${l.w} — scored" data-tip-value="${r1(l.actual)}"></span>
+        <span class="dbdot b" tabindex="0" style="left:${b}%"
+          data-tip="Week ${l.w} — best possible" data-tip-value="${r1(l.best)}"
+          data-tip-extra="${r1(l.best - l.actual)} left on the bench"></span>
+        <span class="dblab" style="left:calc(${b}% + 10px)">${r1(l.best)}</span>
+      </div>
+    </div>`;
+  }).join('');
+  return `<div class="chart">
+    <div class="legend">
+      <span><i class="key" style="background:var(--c-mark)"></i>Scored</span>
+      <span><i class="key" style="background:var(--c-mark-2)"></i>Best possible lineup</span>
+    </div>
+    ${rows}
+    <div class="axis"><span>0</span><span>${r1(max)} pts</span></div>
+  </div>`;
+}
+
+// "Christian McCaffrey" needs 137px, which no phone can spare beside a bar.
+// Chart axes abbreviate; the tooltip and the table below keep the full name.
+const shortName = n => {
+  const parts = String(n || '').trim().split(/\s+/);
+  return parts.length < 2 ? (n || '') : `${parts[0][0]}. ${parts.slice(1).join(' ')}`;
+};
+
+// Roster value, emphasis form: the question is whether your best are starting.
+function chartRoster(players, starterSet) {
+  const list = players.filter(p => p.score > 0);
+  if (!list.length) return '';
+  const max = Math.max(...list.map(p => p.score));
+  // Label selectively: the best player, and the best one sitting on the bench --
+  // that pair is the whole question. The table underneath carries every value.
+  const topBench = list.filter(p => !starterSet.has(p.pid))[0];
+  const rows = list.map(p => {
+    const on = starterSet.has(p.pid);
+    return `<div class="brow">
+      <span class="bname">${esc(shortName(p.name))}</span>
+      <div class="btrack">
+        <div class="vbar${on ? ' on' : ''}" tabindex="0" style="width:${p.score / max * 100}%"
+          data-tip="${esc(p.name)} — ${on ? 'starting' : 'bench'}"
+          data-tip-value="${r1(p.score)}"
+          data-tip-extra="proj ${r1(p.ros)} · actual ${r1(p.actAvg)}"></div>
+      </div>
+    </div>`;
+  }).join('');
+  // The two numbers worth calling out ride in a caption rather than as labels on
+  // the marks: a tip label on a proportional bar has nowhere safe to sit at
+  // narrow widths, and every value is in the table directly below.
+  const callout = `<p class="callout">Best: <b>${esc(list[0].name)} ${r1(list[0].score)}</b>`
+    + (topBench ? ` · best on your bench: <b>${esc(topBench.name)} ${r1(topBench.score)}</b>` : '')
+    + `</p>`;
+  return `<div class="chart plot">
+    <div class="legend">
+      <span><i class="key rect" style="background:var(--c-mark)"></i>Starting</span>
+      <span><i class="key rect" style="background:var(--c-mute)"></i>Bench</span>
+    </div>
+    ${callout}
+    ${rows}
+  </div>`;
+}
+
+// Trade deltas: polarity around zero, so diverging.
+function chartDelta(rows) {
+  const max = Math.max(1, ...rows.map(r => Math.abs(r.v)));
+  const body = rows.map(r => {
+    const w = Math.abs(r.v) / max * 50;
+    const pos = r.v >= 0;
+    return `<div class="dvrow">
+      <span class="bname">${esc(r.k)}</span>
+      <div class="dvtrack">
+        <span class="dvzero"></span>
+        <div class="dvbar ${pos ? 'pos' : 'neg'}" tabindex="0"
+          style="left:${pos ? 50 : 50 - w}%;width:${w}%"
+          data-tip="${esc(r.k)}" data-tip-value="${r.v >= 0 ? '+' : ''}${r.v.toFixed(1)}"
+          data-tip-extra="${esc(r.note)}"></div>
+      </div>
+      <span class="bval">${r.v >= 0 ? '+' : ''}${r.v.toFixed(1)}</span>
+    </div>`;
+  }).join('');
+  return `<div class="chart">${body}</div>`;
+}
+
+const posCell = p => `<span class="pos ${p.pos}">${p.pos}</span>`;
     const injTag = p => p.inj ? ` <span class="tag ${/Out|IR|Doubtful/i.test(p.inj) ? 'bad' : 'warn'}">${esc(p.inj)}</span>` : '';
     const nameCell = p => `<span class="nm">${esc(p.name)}</span>
   <span class="dim"> ${esc(p.team || '')}</span>${injTag(p)}`;
@@ -738,6 +1357,7 @@
     }
 
     function render(league, state, me, myTeam, droppable, fas, leaks, bar, rosters, nameOf) {
+  const leakTotal = leaks.reduce((a, l) => a + (l.best - l.actual), 0);
       const s = me.settings;
       $('rtitle').textContent = league.name;
       $('rmeta').innerHTML = `Week ${state.week} · ${s.wins}-${s.losses}` +
@@ -746,12 +1366,48 @@
 
       const starterSet = new Set(me.starters || []);
       const waiverFaab = league.settings.waiver_type === 2;
+      const leadKpis = `<div class="tstats">
+    <div class="tstat"><span class="k">Record</span><span class="v">${s.wins}-${s.losses}</span></div>
+    <div class="tstat"><span class="k">Points for</span><span class="v">${s.fpts}.${s.fpts_decimal || 0}</span></div>
+    <div class="tstat"><span class="k">Left on bench</span><span class="v ${
+      leakTotal > 15 ? 'bad' : leakTotal > 6 ? 'warn' : 'dim'}">${r1(leakTotal)}</span></div>
+    <div class="tstat"><span class="k">Best available</span><span class="v">${r1(fas[0]?.score || 0)}</span></div>
+  </div>`;
+
       const pills = `
     <span class="pill">Waivers: ${waiverFaab
           ? `FAAB · $${league.settings.waiver_budget - (s.waiver_budget_used || 0)} left`
           : `priority #${s.waiver_position} of ${league.total_rosters}`}</span>
     <span class="pill">Roster ${(me.players || []).length}/${league.roster_positions.length}</span>
     <span class="pill">Lineup: ${league.roster_positions.filter(p => p !== 'BN').join(' / ')}</span>`;
+
+      /* --- trade evaluator ------------------------------------------------
+         Sleeper's public API never exposes pending trades -- only completed
+         transactions -- so an offer has to be entered by hand. Same engine
+         either way: how far does the deal move your best starting lineup. */
+      const others = rosters.filter(r => r.roster_id !== me.roster_id);
+      const pickRow = p =>
+        `<button class="pick" type="button" data-pid="${p.pid}">` +
+        `${posCell(p)} ${nameCell(p)}<span class="num dim">${r1(p.score)}</span></button>`;
+      const tradeSection = !others.length ? '' : `
+        <h2>Trade evaluator<span class="sub">tap players on each side to grade an offer</span></h2>
+        <div class="card">
+          <div class="tradecols">
+            <div>
+              <label>You give</label>
+              <div class="picklist" id="t-give">${
+                myTeam.map(pickRow).join('')}</div>
+            </div>
+            <div>
+              <label for="t-team">You get from</label>
+              <select id="t-team">${others.map(r =>
+                `<option value="${r.roster_id}">${esc(nameOf[r.owner_id] || 'Roster ' + r.roster_id)}</option>`
+              ).join('')}</select>
+              <div class="picklist" id="t-get"></div>
+            </div>
+          </div>
+          <div id="t-result"></div>
+        </div>`;
 
       const byPos = {};
       fas.forEach(f => { (byPos[f.pos] ||= []).push(f); });
@@ -808,9 +1464,10 @@
        already roster at any position. <b>Hold.</b></div>`;
 
       /* --- lineup leaks --- */
-      const totalLeak = leaks.reduce((a, l) => a + (l.best - l.actual), 0);
+      const totalLeak = leakTotal;
       const leakSection = leaks.length ? `
     <h2>Lineup leaks<span class="sub">points left on your bench</span></h2>` +
+        chartWeekly(leaks) +
         table(`<th>Week</th><th>Result</th><th class="num">Scored</th><th class="num">Optimal</th>
            <th class="num">Left on bench</th><th>Biggest miss</th>`,
           leaks.map(l => {
@@ -831,7 +1488,8 @@
         : '';
 
       /* --- your roster --- */
-      const rosterSection = `<h2>Your roster<span class="sub">sorted by rest-of-season projection</span></h2>` +
+      const rosterSection = `<h2>Your roster<span class="sub">value by player — are your best players starting?</span></h2>` +
+        chartRoster(myTeam, starterSet) +
         table(`<th>Player</th><th class="num">Value</th><th class="num">Proj/wk</th><th class="num">Actual/wk</th>
            <th class="num">Snap%</th><th>Status</th>`,
           myTeam.map(p => `<tr>
@@ -855,7 +1513,7 @@
         <td class="dim">${/Out|IR/i.test(p.inj || '') ? 'IR-eligible — stash, do not cut' : ''}</td>
       </tr>`)) : '';
 
-      $('rbody').innerHTML = pills + topSection + leakSection +
+      $('rbody').innerHTML = leadKpis + pills + topSection + tradeSection + leakSection +
         dropSection + rosterSection +
         `<div class="note note--plain">
       <b>Value</b> blends Sleeper's projection with what a player has actually produced,
@@ -864,6 +1522,9 @@
       teammate was out. Weeks a player suited up and busted count against him; only true
       DNPs are skipped. Sleeper's raw projections lag breakout rookies, which
       is why <b>Proj/wk</b> is shown next to it.</div>`;
+
+      wireTrade();
+      wireTips($('rbody'));
     }
 
 
