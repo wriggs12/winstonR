@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Music - Winston Riggs</title>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Favorite songs.">
+  <meta name="author" content="Winston Riggs">
+
+  <link rel="stylesheet" href="styles/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+
+  <style>
+    .mu,
+    .mu *,
+    .mu *::before,
+    .mu *::after {
+      box-sizing: border-box;
+    }
+
+    .mu {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+    }
+
+    .mu h1 {
+      font-size: 26px;
+      margin: 0 0 6px;
+      color: var(--text-1);
+    }
+
+    .mu h2 {
+      font-size: 17px;
+      margin: 32px 0 12px;
+      color: var(--brand);
+    }
+
+    .mu h2 .sub {
+      font-weight: 400;
+      color: var(--text-2);
+      font-size: 13px;
+      margin-left: 8px;
+    }
+
+    .mu .lede {
+      color: var(--text-2);
+      margin: 0 0 24px;
+      font-size: 14px;
+    }
+
+    .mu .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+    }
+
+    /* album grid */
+    .mu .songs {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 16px;
+    }
+
+    .mu .song {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      border-radius: 10px;
+      outline: none;
+    }
+
+    .mu .cover {
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      transition: border-color .15s, transform .15s, box-shadow .15s;
+    }
+
+    .mu .cover img {
+      position: relative;
+      /* paint above the placeholder note */
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .mu .cover img.loaded {
+      opacity: 1;
+    }
+
+    /* placeholder note shown until (or instead of) the artwork */
+    .mu .cover .ph {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font-size: 34px;
+      color: var(--border);
+    }
+
+    .mu .cover .play {
+      position: absolute;
+      right: 8px;
+      bottom: 8px;
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(15, 20, 25, 0.8);
+      color: var(--brand);
+      font-size: 16px;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity .15s, transform .15s;
+    }
+
+    .mu .song:hover .cover,
+    .mu .song:focus-visible .cover {
+      border-color: var(--brand);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .mu .song:hover .play,
+    .mu .song:focus-visible .play {
+      opacity: 1;
+      transform: none;
+    }
+
+    .mu .song .title {
+      display: block;
+      margin-top: 8px;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text-1);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .mu .song .artist {
+      display: block;
+      font-size: 12.5px;
+      color: var(--text-2);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* featured "on repeat" card; its backdrop is a blurred copy of the cover */
+    .mu .hero {
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--surface);
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .mu .hero[hidden] {
+      display: none;
+    }
+
+    .mu .hero .backdrop {
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: blur(48px) saturate(1.4);
+      transform: scale(1.4);
+      opacity: 0;
+      transition: opacity .6s;
+    }
+
+    /* darken so the text always reads, whatever the cover's colors */
+    .mu .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: linear-gradient(90deg, rgba(15, 20, 25, 0.35), rgba(15, 20, 25, 0.75));
+    }
+
+    .mu .hero .backdrop.loaded {
+      opacity: .7;
+    }
+
+    .mu .hero .cover {
+      width: 200px;
+      flex-shrink: 0;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .mu .hero .info {
+      min-width: 0;
+    }
+
+    .mu .hero .label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .mu .hero .h-title {
+      display: block;
+      margin: 8px 0 2px;
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--text-1);
+    }
+
+    .mu .hero .h-artist {
+      display: block;
+      font-size: 15px;
+      color: var(--text-2);
+    }
+
+    .mu .hero .h-note {
+      margin: 14px 0 0;
+      font-size: 14px;
+      color: var(--text-1);
+      opacity: .85;
+    }
+
+    .mu .hero .listen {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 18px;
+      padding: 9px 16px;
+      border-radius: 99px;
+      background: var(--text-1);
+      color: var(--bg);
+      font-size: 13.5px;
+      font-weight: 700;
+      transition: background .15s;
+    }
+
+    .mu .hero:hover .listen,
+    .mu .hero:focus-visible .listen {
+      background: var(--brand);
+    }
+
+    .mu .hero:focus-visible {
+      outline: 2px solid var(--brand);
+      outline-offset: 2px;
+    }
+
+    /* page glow tinted by the cover in focus; sits under the particles */
+    @property --amb {
+      syntax: '<color>';
+      inherits: false;
+      initial-value: #219ebc;
+    }
+
+    #ambient {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 85% 55% at 50% -5%, color-mix(in srgb, var(--amb) 30%, transparent), transparent 70%),
+        radial-gradient(ellipse 60% 45% at 100% 100%, color-mix(in srgb, var(--amb) 12%, transparent), transparent 70%);
+      transition: --amb .8s ease;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #ambient {
+        transition: none;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .mu {
+        padding: 20px 12px 64px;
+      }
+
+      .mu h1 {
+        font-size: 22px;
+      }
+
+      .mu .hero {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 18px;
+        padding: 18px;
+      }
+
+      .mu .hero .cover {
+        width: 100%;
+        max-width: 260px;
+      }
+
+      .mu .hero .h-title {
+        font-size: 22px;
+      }
+
+      .mu .songs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="ambient" aria-hidden="true"></div>
+  <canvas id="particles-bg" aria-hidden="true"></canvas>
+
+  <header>
+    <div class="header">
+      <div class="logo">
+        <a href="index.html">
+          <span class="logo_text">> 01010111 01010010</span>
+          <span class="logo_cursor"></span>
+        </a>
+      </div>
+      <input class="nav-toggle" type="checkbox" id="nav-toggle">
+      <label class="nav-burger" for="nav-toggle" aria-label="Menu"></label>
+      <div class="navbar">
+        <a href="codeography.html">Codeography</a>
+        <a href="music.html">Music</a>
+        <a href="legal.html">Legal</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="mu">
+      <h2>My Favorite Music</h2>
+
+      <a class="hero" id="hero" target="_blank" rel="noopener" hidden></a>
+
+      <h2><span class="sub" id="count"></span></h2>
+      <ul class="songs" id="songs"></ul>
+    </div>
+  </main>
+
+  <script src="scripts/particles.js" defer></script>
+  <script>
+    // ── Favorite songs ──────────────────────────────────────────────
+    // Edit this list. `url` can be any YouTube, Spotify, SoundCloud or
+    // Apple Music link; the icon is picked from the domain. Covers are looked
+    // up automatically unless a song sets `cover: '<image url>'` ('' for none).
+    // Mark one song `featured: true` (with an optional `note`) for the top card.
+    const SONGS = [
+      { title: 'Forgive Me', artist: 'ODESZA', url: 'https://www.youtube.com/watch?v=bpGHUYJb5lI', cover: 'https://yt3.googleusercontent.com/E5UsMf3XMdip-gHhet-9zDPkrWlv82vbELv7a4SvGyU21L8nTzdcnmuLJ0vSr3XCp_bQCvHbvsH6_xGDow=w600-h600-l90-rj' },
+      { title: 'Sweet Child O\' Mine', artist: 'Guns N\' Roses', url: 'https://www.youtube.com/watch?v=oMfMUfgjiLg', cover: 'https://yt3.googleusercontent.com/Z2zgZT7ICWRL7ACDERnWaGA3nBmLSK3fqOXDg-EQuhSnwvNV_i5pEQ6-z_m_v4S44HuNKyFjwtmSghqJ=w600-h600-l90-rj' },
+      { title: 'Hold On, We\'re Going Home', artist: 'Drake', url: 'https://www.youtube.com/watch?v=KnkDL9lkbX8', cover: 'https://yt3.googleusercontent.com/xsLRuEKeIrdL0fT1oBfUEDJqSWvWhQTlzexlvux2ZlOUe1Cydn9y0DN9BJzmAqyalYsmg8PP23GfM5Pf1Q=w600-h600-l90-rj' },
+      { title: 'XO Tour Llif3', artist: 'Lil Uzi Vert', url: 'https://www.youtube.com/watch?v=k5PO17AC3Kg', cover: 'https://yt3.googleusercontent.com/K0Cpbra-ICGqgVi69QXcImG3F_W_kMxhPaGqeqnK8-9VEE5aa2s_m2Ls6BZ2bf2T9XArRggA__Lve-M=w600-h600-l90-rj' },
+      { title: 'Feelings Gone', artist: 'Frank Ocean', url: 'https://www.youtube.com/results?search_query=Feelings+Gone', cover: '' },
+      { title: 'i walk this earth all by myself', artist: 'EKKSTACY', url: 'https://www.youtube.com/watch?v=xeMTHR6hkxQ', cover: 'https://yt3.googleusercontent.com/cYB0cceRTKLzWOYYxdXVltv0ne4-vK-jL9CK1PlJ3HKRkZPZgVL8kPGAvK8pb0ArFMMiUUbvGCO7gjZY=w600-h600-l90-rj' },
+      { title: 'Father Stretch My Hands Pt. 1', artist: 'Kanye West', url: 'https://www.youtube.com/watch?v=wuO4_P_8p-Q', cover: 'https://yt3.googleusercontent.com/aPKvJlUpWx0i61bLgr5VGYadl7jzK-mtJTt5utKUkZgjLB98IHqIaptWpsJpJQ-fLIYIZ0j7cJN2cYjs4Q=w600-h600-l90-rj' },
+      { title: 'Cherry Waves', artist: 'Deftones', url: 'https://www.youtube.com/watch?v=jtBmowJLc94', cover: 'https://yt3.googleusercontent.com/TOBgRvdH0szlTWlLMr5krn9lpO7XwmqlcoYflg4YQlLsEWH-CxREc-WTH1vw9oqsyj7zrlA0fSKkDZw=w600-h600-l90-rj' },
+      { title: 'Fantasy', artist: 'Silva Bumpa', url: 'https://www.youtube.com/watch?v=YXJo1gxBAa0', cover: 'https://yt3.googleusercontent.com/_dkiuxVbpx5aVu-mAO1g3LY7YAwNN3CdXYldqqIhbou0QK5iDgtH7tsj92dHDIXlycx0jJrWs1OhpeI=w600-h600-l90-rj' },
+      { title: 'Slow Dancing in a Burning Room', artist: 'John Mayer', url: 'https://www.youtube.com/watch?v=5MkfBNl_3pw', cover: 'https://yt3.googleusercontent.com/ZZB2xyt2onR7PxtYxAi4ryrQEY6OCzwReIeDWGMi5WckxjPXHeIimtL1c7ewLp9JopObbwU8f7ILA0BS=w600-h600-s-l90-rj' },
+      { title: 'Intimidated', artist: 'KAYTRANADA', url: 'https://www.youtube.com/watch?v=JpJ7KO08mqg', cover: 'https://yt3.googleusercontent.com/Z_odTF6B-9rjlJ6lcfK1NeaD1UVoY4BqvIDRgIdaHPVZmXM1GIJuT5oh5sfBguuM3NsjK5yMzoQv5bQjeg=w600-h600-l90-rj' },
+      { title: 'Come As You Are', artist: 'Nirvana', url: 'https://www.youtube.com/watch?v=f1IdyrhOrGs', cover: 'https://yt3.googleusercontent.com/y5IBmF0YJl0a88GbDmKQE2C596wB3xaqBz4XjLWCoerJz3X4ZVyKdAFBy93VYEPYd6ED0Ue3fNXS8X-cxw=w600-h600-l90-rj' },
+      { featured: true, title: 'Entombed', artist: 'Deftones', url: 'https://www.youtube.com/watch?v=gEXbHKAuHSg', cover: 'https://yt3.googleusercontent.com/6aBG7KqSZSBz_TyeKkviVbKTfiq1MS3P14-BO3FoZ_j1qW4JbwBLJ3AtAfcVcdMNoiyDmR1RatQUOCMz8A=w600-h600-l90-rj' },
+      { title: 'Ride Wit Me', artist: 'Nelly', url: 'https://www.youtube.com/watch?v=1gyhxPtzfbo', cover: 'https://yt3.googleusercontent.com/RDVFbYNV5cFoRESNdkPP5Pp0rUmaTmJRATjVn3xYFjTwo_wizOtQ1NP8aDRatHa-56BPtjvJanbAR2h0Gg=w600-h600-l90-rj' },
+      { title: 'Better Dayz', artist: '2Pac', url: 'https://www.youtube.com/watch?v=Mk2RXIEMK8Y', cover: 'https://yt3.googleusercontent.com/EMmZREE3VvX88QNlb-s5uiXk7iNqFSwP1t5QN8Ete4Ax5qEBMaaeaE8FqVJ8h5fOOa4v19XCTVaDNe1L=w600-h600-l90-rj' },
+      { title: 'The View Between Villages', artist: 'Noah Kahan', url: 'https://www.youtube.com/watch?v=-K9zek7TwKs', cover: 'https://yt3.googleusercontent.com/isNAbxIyhAMvxp9taAqUnk3q5yxnLYtWLV4WpCYmYBWnka3_3SRPmdAAk8OmXEyjNgASlypZ3-I-PtVc=w600-h600-l90-rj' },
+      { title: 'Me Against The World', artist: '2Pac', url: 'https://www.youtube.com/watch?v=hNXdOhwVAhk', cover: 'https://yt3.googleusercontent.com/FGfgNTPocykTWgQpbYGZb7OOdLCpzv0bvxyEAXKZSm8CGiwpHyTiEMC0JWYsubN7XXEpzg9kYIQJLSY=w600-h600-l90-rj' },
+      { title: 'The Fire', artist: 'Chris Stapleton', url: 'https://www.youtube.com/watch?v=wYM4xYxeJ-U', cover: 'https://yt3.googleusercontent.com/N7tWZ9kRToe77sveuY8Fv_DLlbLl9xVYIz7PdzMuPSE5f6YtNjkcm4xFNTrUfQc13vjyBRqU4gMxU_7bwQ=w600-h600-l90-rj' },
+      { title: 'lost souls', artist: 'Baby Keem', url: 'https://www.youtube.com/watch?v=D0ong-e41ko', cover: 'https://yt3.googleusercontent.com/FtE0jLCJDTWWHwmV-Ek5PrMUp8IabwWXpgEV2rGDZDTTNrguiknsmFqJymVaFyLsnzftUg7HrV58QMRBtA=w600-h600-l90-rj' },
+      { title: 'Ain\'t Nobody', artist: 'Chaka Khan', url: 'https://www.youtube.com/watch?v=rcAv1cGAeXE', cover: 'https://yt3.googleusercontent.com/rxICYUMQwhu6XHGROXwh7U-YzdUIpida36755tS3ehhT4wTIY_klqfKlLirwEMmNm40LEopDg8JMA_s=w600-h600-l90-rj' },
+      { title: 'Lemon Pepper Freestyle', artist: 'Drake', url: 'https://www.youtube.com/watch?v=YvkHPdsjQQs', cover: 'https://yt3.googleusercontent.com/VVJmvBzr4heoGxBqhLE9qA6UmSeLq-U3D2oEA72VMZDHoPkNamKwLSbu5fFa5PL28A_a7wcYFxmKuM2y=w600-h600-l90-rj' },
+      { title: 'Nights', artist: 'Frank Ocean', url: 'https://www.youtube.com/watch?v=Fx3b85eDQvw', cover: 'https://yt3.googleusercontent.com/TWBi2M7D8gIwoo3NmhGfoVKI-PuzDunLVYpmLCbeP8Uw2YWpnjttlxmVvpVaO8uSjmLPjHgy6iGXxlPF=w600-h600-l90-rj' },
+      { title: 'Wrong Faces', artist: 'Brent Faiyaz', url: 'https://www.youtube.com/watch?v=aSMRxqRAgjk', cover: 'https://yt3.googleusercontent.com/Js6Bl0QLujirYmcsWLdCwghJ85wEPXvJjBpRo_T-YbYsjlVZPf-JhZcBZ0VnX6Nj6En2V-Yno-NstqI=w600-h600-l90-rj' },
+      { title: 'If I\'m Lyin\', I\'m Flyin\'', artist: 'Kodak Black', url: 'https://www.youtube.com/watch?v=hQ7WD_PzdQQ', cover: 'https://yt3.googleusercontent.com/6PJu7wYm_LSgkc4rPJSoW1ua-ueza0fZy1J8-XRWv0DZUYQ9RbTKHgpXf256BDyONzLP86RvK4lPlojr=w600-h600-l90-rj' },
+      { title: 'BIRDS OF A FEATHER', artist: 'Billie Eilish', url: 'https://www.youtube.com/watch?v=WKZO-CWeOVA', cover: 'https://yt3.googleusercontent.com/mXJjWX4E6Gpr03CUYl18PdVXlczmoL2Tm-LEBGafIr_8smlHnl8AHniJu0_7Y80e-aeloJxcryQQx0ZJ=w600-h600-l90-rj' },
+      { title: '16', artist: 'Baby Keem', url: 'https://www.youtube.com/watch?v=S1VvnaCAKJ8', cover: 'https://yt3.googleusercontent.com/988RLfX1-IB2qxcYizVxU-N4xpM988H_FzUkxGMQvUXjvI3T3hKIcr7sgz69b5D4nNA5XRWSwA42HwlA2Q=w600-h600-l90-rj' },
+      { title: 'A Cold Sunday', artist: 'Lil Yachty', url: 'https://www.youtube.com/watch?v=cru3zaO-mSI', cover: 'https://yt3.googleusercontent.com/nJPJ2A-GegdwYxJ0lQnTWJqKYQ3q79Cq7Hlbh5seYl_HWEgqFwYLtu8QHsfxvT9BtNX2wEjDITPVVGFj=w600-h600-l90-rj' },
+      { title: 'White Horse', artist: 'Chris Stapleton', url: 'https://www.youtube.com/watch?v=56Snhw2qMJ4', cover: 'https://yt3.googleusercontent.com/N7tWZ9kRToe77sveuY8Fv_DLlbLl9xVYIz7PdzMuPSE5f6YtNjkcm4xFNTrUfQc13vjyBRqU4gMxU_7bwQ=w600-h600-l90-rj' },
+      { title: 'Slow Burner', artist: 'Interplanetary Criminal', url: 'https://www.youtube.com/watch?v=odduJxGqmjQ', cover: 'https://yt3.googleusercontent.com/aeZ9RnZqSZTeKsaF-2CI9qhnrtJ3O_vIZUNkzkblJaX-vamEgQuN40Hul6cwXo0k_7z_Xe8affWK_L0=w600-h600-l90-rj' },
+      { title: 'Champion', artist: 'Kanye West', url: 'https://www.youtube.com/watch?v=jKT4ArZCkso', cover: 'https://yt3.googleusercontent.com/LENzUxyoVSRKUEZrw6nG5cOajuDDnFaIQIbD3LW95HaLLNOW4IHHvpGl0nmCoyFpiQE93jtT2FJTJk2Oqg=w600-h600-l90-rj' },
+      { title: 'Blue Notes', artist: 'Meek Mill', url: 'https://www.youtube.com/watch?v=ZQZGnVeKkEg', cover: 'https://yt3.googleusercontent.com/j9qMbp_TpJnYCIubTLYHNqKjS62vpfAryDFbHu6BTQ2lTDV9mFEJoPmYvqJ7k_YRxWuhMb69O7FSOto=w600-h600-l90-rj' },
+      { title: 'WHERE SHE GOES', artist: 'Bad Bunny', url: 'https://www.youtube.com/watch?v=OmiyTUk-tgQ', cover: 'https://yt3.googleusercontent.com/wLNbSrba-Qu4IFD4zLkjmxn2IqtDN1tQEWSh_QgrlBTy1GhDLai3JGjEmQ9K-6sWttkzQFBrmO2Mj4_1iw=w600-h600-l90-rj' },
+      { title: 'tell you straight', artist: 'jigitz', url: 'https://www.youtube.com/watch?v=6yufjxveDSg', cover: 'https://yt3.googleusercontent.com/ovjZVwgZelFUJiYrxK3wZkJhVYU3fZNi54KMKs2jrpfHXbl_mEtuQ6iRgG9_qBwRYY_uKqlJzRAvwETM=w600-h600-l90-rj' },
+      { title: 'Nobody\'s Perfect', artist: 'J. Cole', url: 'https://www.youtube.com/watch?v=c_EDbmqw7HE', cover: 'https://yt3.googleusercontent.com/94qi5DYOjh-FdVmWfIPhU5nE8F5m1bwSm9wxROs1-Gq-JM9pveQ9Uq9MhdRu3btD6AdjbvwE67UseFxV=w600-h600-l90-rj' },
+      { title: 'Animal I Have Become', artist: 'Three Days Grace', url: 'https://www.youtube.com/watch?v=ysho2xTWUYo', cover: 'https://yt3.googleusercontent.com/lw9aD4EPCJ-HiAPpZTwVlmYfEJrWM_mf4Qgn-6ZdYLvfx5JBnAXO5InwzrAm3L3rAcXpyF8bx351BLnQ=w600-h600-l90-rj' },
+      { title: 'Fly Away', artist: 'Lenny Kravitz', url: 'https://www.youtube.com/watch?v=2KeFjLDkOrI', cover: 'https://yt3.googleusercontent.com/zSXG3sH2zLL_yvq_3czq35eqXpm8pgIB6_Ap8MteJUeX2dYX0O0ADdoufXPG16uL1CQqWOBnwTbNlLwp=w600-h600-l90-rj' },
+      { title: 'Gravity', artist: 'John Mayer', url: 'https://www.youtube.com/watch?v=_iGOWk-r614', cover: 'https://yt3.googleusercontent.com/ZZB2xyt2onR7PxtYxAi4ryrQEY6OCzwReIeDWGMi5WckxjPXHeIimtL1c7ewLp9JopObbwU8f7ILA0BS=w600-h600-s-l90-rj' },
+      { title: 'HIGHJACK (right back)', artist: 'Alok, Łaszewo & A$AP Rocky', url: 'https://www.youtube.com/watch?v=UkrvYca8s-I', cover: 'https://yt3.googleusercontent.com/FIlOGr5ejO4YYmXYQipuz84HI6q8_jhuvgkAePVFUJpJw4eI2776lB9LO8IYn4aBX59hF-clzhjDMTID=w600-h600-l90-rj' },
+      { title: 'Silence (Airscape Remix)', artist: 'Delerium', url: 'https://www.youtube.com/watch?v=oTLJjoW867g&list=RDoTLJjoW867g&start_radio=1', cover: 'https://yt3.googleusercontent.com/HagF7RQEV-NET0fSn9sDlzwP4tvcjI3K_iUkO-4s9zAvZe3nqDkqoaPBXAohriyQZfloz6LNP36E1K-_=w600-h600-l90-rj' },
+      { title: 'Believe', artist: 'Cher', url: 'https://www.youtube.com/watch?v=oOGxKLUMbbc', cover: 'https://yt3.googleusercontent.com/edGjMf2CcnPfFlC78wkFcIzBdW7EXNjGF60IHilJo3mOy3UFrjKO3U-hMWLfxSrjimWTz7T-uPnLL6YHDw=w600-h600-s-l90-rj' },
+      { title: 'Infinite', artist: 'Eminem', url: 'https://www.youtube.com/watch?v=Awuj-9oXms4', cover: 'https://yt3.googleusercontent.com/Z4bnlgDE6prxIkMZzM_bq5mmN9GeA-EY5aAkfjjSIWBpJHTW-fx7Ax7d9kpxlO0kuaJr3ndEHxXNv2UY3A=w600-h600-l90-rj' },
+      { title: '2009', artist: 'Mac Miller', url: 'https://www.youtube.com/watch?v=5zivz7kVKNo', cover: 'https://yt3.googleusercontent.com/YxyJh9VYIKgPAulnGiK6OMmBm2r_3eSTsm1myZu1qSKXlb77sSKlGl8VOgxU0tS1LJreNMntkktrp2Y=w600-h600-l90-rj' },
+      { title: 'Purple Rain', artist: 'Prince', url: 'https://www.youtube.com/watch?v=347vCib_lMs', cover: 'https://yt3.googleusercontent.com/vJbte0qGG-GmLK6lms4lwFHND7YAQGPT0s6ANe4lLaYjm9UizD8RdisHf6vqrqvRHQoQ8suQ9N5cGKPK=w600-h600-l90-rj' },
+      { title: 'Work Out', artist: 'J. Cole', url: 'https://www.youtube.com/watch?v=UWlibNTrg80', cover: 'https://yt3.googleusercontent.com/94qi5DYOjh-FdVmWfIPhU5nE8F5m1bwSm9wxROs1-Gq-JM9pveQ9Uq9MhdRu3btD6AdjbvwE67UseFxV=w600-h600-l90-rj' },
+      { title: 'adore u', artist: 'Fred again..', url: 'https://www.youtube.com/watch?v=zUxJP8IiN5g', cover: 'https://yt3.googleusercontent.com/7weTWbK_H4ff5ULsPlITgrnfHTrRh-zGHyLuXFZEIi4qnEO1FY9-X9UjnoRTuyRza9UBfCk7axB8cRJ-=w600-h600-l90-rj' },
+      { title: 'I\'m On Fire', artist: 'Bruce Springsteen', url: 'https://www.youtube.com/watch?v=1VxFS5-klfk', cover: 'https://yt3.googleusercontent.com/fJUAt8fNSPSXLzFFll7dA-0usJM-4I1N6-x6N1w5M-SNsEcvwM0Wp81bc838ahL6L6DRULeNzB6ioNqg=w600-h600-l90-rj' },
+      { title: 'Self Care', artist: 'Mac Miller', url: 'https://www.youtube.com/watch?v=rn4mVQswfNg', cover: 'https://yt3.googleusercontent.com/YxyJh9VYIKgPAulnGiK6OMmBm2r_3eSTsm1myZu1qSKXlb77sSKlGl8VOgxU0tS1LJreNMntkktrp2Y=w600-h600-l90-rj' },
+      { title: 'Fashion Killa', artist: 'A$AP Rocky', url: 'https://www.youtube.com/watch?v=J_Hf6ssMTyM', cover: 'https://yt3.googleusercontent.com/Oa7LlzALtpit3vY3QTq6mSpPeIJOIHCARLmXjzOMKdJHRfw3VGg2TXhoWbSDc-gic9hOeNe-1DzVKHg=w600-h600-l90-rj' },
+      { title: 'Dani California', artist: 'Red Hot Chili Peppers', url: 'https://www.youtube.com/watch?v=4FkfyssnHqU', cover: 'https://yt3.googleusercontent.com/aUs9JPxr2nWmA6_8bL1YIjI6xHM7TfwZifuA_R76Y9WinfOSval3RCb8x1lkEtq1G-5gwrHYSaQkAUkz=w600-h600-s-l90-rj' },
+      { title: 'Neon', artist: 'John Mayer', url: 'https://www.youtube.com/watch?v=eXBNx9JL-_w', cover: 'https://yt3.googleusercontent.com/y_RTFtwTAk98KQrIEuWBiSzYw8b7vc23J8Hv6_WmkzgUomTuqvYIu99oo6F5nYo3dVFifu4-zQecli4=w600-h600-l90-rj' },
+    ];
+
+    const $ = id => document.getElementById(id);
+
+    function iconFor(url) {
+      const host = (() => { try { return new URL(url).hostname; } catch { return ''; } })();
+      if (/youtube\.com|youtu\.be/.test(host)) return 'fa-youtube-play';
+      if (/spotify\.com/.test(host)) return 'fa-spotify';
+      if (/soundcloud\.com/.test(host)) return 'fa-soundcloud';
+      if (/music\.apple\.com/.test(host)) return 'fa-apple';
+      return 'fa-play';
+    }
+
+    // ── Album covers ────────────────────────────────────────────────
+    // A song's `cover` wins if set; otherwise look it up on the iTunes
+    // Search API (free, no key, CORS-enabled) and cache the result so
+    // repeat visits don't hit the API again.
+    const COVER_CACHE = 'music-covers-v1';
+    const cache = (() => { try { return JSON.parse(localStorage.getItem(COVER_CACHE)) || {}; } catch { return {}; } })();
+    const saveCache = () => { try { localStorage.setItem(COVER_CACHE, JSON.stringify(cache)); } catch { } };
+
+    // JSONP instead of fetch: Apple refuses CORS for pages opened from disk
+    // (origin "null"), but a <script> request works from anywhere.
+    let jsonpId = 0;
+    function itunesSearch(term) {
+      return new Promise((resolve, reject) => {
+        const cb = `__itunes${jsonpId++}`;
+        const el = document.createElement('script');
+        const done = () => { delete window[cb]; el.remove(); clearTimeout(timer); };
+        const timer = setTimeout(() => { done(); reject(new Error('timeout')); }, 8000);
+        window[cb] = data => { done(); resolve(data); };
+        el.onerror = () => { done(); reject(new Error('network')); };
+        el.src = `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&entity=song&limit=1&callback=${cb}`;
+        document.head.appendChild(el);
+      });
+    }
+
+    const pending = new Map(); // the featured song is looked up twice at once
+    function findCover(s) {
+      if ('cover' in s) return Promise.resolve(s.cover || null); // '' = no cover
+      const key = `${s.artist} — ${s.title}`;
+      if (key in cache) return Promise.resolve(cache[key]);
+      if (!pending.has(key)) {
+        pending.set(key, itunesSearch(`${s.artist} ${s.title}`).then(data => {
+          // artwork URLs end in "100x100bb.jpg"; any size can be requested
+          cache[key] = data.results?.[0]?.artworkUrl100?.replace('100x100bb', '600x600bb') || null;
+          saveCache();
+          return cache[key];
+        }, () => null) // network hiccup: don't cache, try again next visit
+          .finally(() => pending.delete(key)));
+      }
+      return pending.get(key);
+    }
+
+    // ── Cover colors → page glow ────────────────────────────────────
+    // Apple's artwork server allows CORS, so a cover can be sampled once
+    // it loads. A custom `cover` from a host without CORS still shows; it
+    // just doesn't tint the page.
+    const ambient = $('ambient');
+    const DEFAULT_GLOW = getComputedStyle(document.documentElement).getPropertyValue('--brand-deep').trim() || '#219ebc';
+    let featuredGlow = DEFAULT_GLOW;
+    const setGlow = color => ambient.style.setProperty('--amb', color || featuredGlow);
+
+    function loadCover(img, src, onColor) {
+      img.addEventListener('load', () => {
+        img.classList.add('loaded');
+        const color = img.crossOrigin ? dominantColor(img) : null;
+        if (color && onColor) onColor(color);
+      });
+      img.addEventListener('error', () => {
+        if (!img.crossOrigin) return;
+        img.removeAttribute('crossorigin'); // retry as a plain, unsampled image
+        img.src = src;
+      }, { once: true });
+      img.crossOrigin = 'anonymous';
+      img.src = src;
+    }
+
+    // Average the cover's pixels, weighted toward saturated mid-tones so a
+    // black border or white text doesn't wash out the color, then brighten.
+    function dominantColor(img) {
+      try {
+        const N = 24;
+        const c = document.createElement('canvas');
+        c.width = c.height = N;
+        const x = c.getContext('2d', { willReadFrequently: true });
+        x.drawImage(img, 0, 0, N, N);
+        const d = x.getImageData(0, 0, N, N).data;
+        let r = 0, g = 0, b = 0, total = 0;
+        for (let i = 0; i < d.length; i += 4) {
+          const max = Math.max(d[i], d[i + 1], d[i + 2]), min = Math.min(d[i], d[i + 1], d[i + 2]);
+          const sat = max ? (max - min) / max : 0;
+          const mid = max > 40 && max < 245 ? 1 : 0.05;
+          const w = sat * sat * mid + 0.002;
+          r += d[i] * w; g += d[i + 1] * w; b += d[i + 2] * w; total += w;
+        }
+        r /= total; g /= total; b /= total;
+        const k = 220 / Math.max(r, g, b, 1);
+        return `rgb(${Math.round(r * k)}, ${Math.round(g * k)}, ${Math.round(b * k)})`;
+      } catch {
+        return null; // canvas was tainted: no CORS on this image
+      }
+    }
+
+    function renderSongs() {
+      const list = $('songs');
+      list.replaceChildren(...SONGS.map(s => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.className = 'song';
+        a.href = s.url;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.innerHTML = `<div class="cover">
+            <span class="ph"><i class="fa fa-music" aria-hidden="true"></i></span>
+            <img alt="" loading="lazy">
+            <span class="play"><i class="fa ${iconFor(s.url)}" aria-hidden="true"></i></span>
+          </div>
+          <span class="title"></span><span class="artist"></span>`;
+        a.querySelector('.title').textContent = s.title;
+        a.querySelector('.artist').textContent = s.artist;
+        a.title = `${s.title} — ${s.artist}`;
+
+        const img = a.querySelector('img');
+        findCover(s).then(src => { if (src) loadCover(img, src, c => { a.dataset.glow = c; }); });
+        a.addEventListener('pointerenter', () => setGlow(a.dataset.glow));
+        a.addEventListener('focus', () => setGlow(a.dataset.glow));
+
+        li.appendChild(a);
+        return li;
+      }));
+      // leaving the grid (pointer or keyboard) returns to the featured song's glow
+      list.addEventListener('pointerleave', () => setGlow());
+      list.addEventListener('focusout', e => { if (!list.contains(e.relatedTarget)) setGlow(); });
+      $('count').textContent = `${SONGS.length} song${SONGS.length === 1 ? '' : 's'}`;
+    }
+    renderSongs();
+
+    // ── Featured song ───────────────────────────────────────────────
+    // The song marked `featured: true` (or the first one) gets the big card.
+    function renderFeatured() {
+      const s = SONGS.find(x => x.featured) || SONGS[0];
+      if (!s) return;
+      const a = $('hero');
+      a.href = s.url;
+      a.innerHTML = `<img class="backdrop" alt="">
+        <div class="cover">
+          <span class="ph"><i class="fa fa-music" aria-hidden="true"></i></span>
+          <img alt="">
+        </div>
+        <div class="info">
+          <span class="label"><i class="fa fa-repeat" aria-hidden="true"></i> On repeat</span>
+          <span class="h-title"></span>
+          <span class="h-artist"></span>
+          <p class="h-note" hidden></p>
+          <span class="listen"><i class="fa ${iconFor(s.url)}" aria-hidden="true"></i> Listen</span>
+        </div>`;
+      a.querySelector('.h-title').textContent = s.title;
+      a.querySelector('.h-artist').textContent = s.artist;
+      if (s.note) {
+        const note = a.querySelector('.h-note');
+        note.textContent = s.note;
+        note.hidden = false;
+      }
+      findCover(s).then(src => {
+        if (!src) return;
+        loadCover(a.querySelector('.backdrop'), src);
+        loadCover(a.querySelector('.cover img'), src, c => { featuredGlow = c; setGlow(); });
+      });
+      a.hidden = false;
+    }
+    renderFeatured();
+  </script>
+</body>
+
+</html>

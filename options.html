@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Options Pricer - Winston Riggs</title>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Black-Scholes options pricer. Computes European call and put prices and the full set of Greeks.">
+  <meta name="author" content="Winston Riggs">
+
+  <link rel="stylesheet" href="styles/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+
+  <style>
+    /* styles.css sets box-sizing on a few selectors only, never globally */
+    .op,
+    .op *,
+    .op *::before,
+    .op *::after {
+      box-sizing: border-box;
+    }
+
+    .op {
+      --bad: #ff6b6b;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+    }
+
+    .op h1 {
+      font-size: 26px;
+      margin: 0 0 6px;
+      color: var(--text-1);
+    }
+
+    .op h2 {
+      font-size: 17px;
+      margin: 32px 0 12px;
+      color: var(--brand);
+    }
+
+    .op .lede {
+      color: var(--text-2);
+      margin: 0 0 24px;
+      font-size: 14px;
+    }
+
+    .op .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+    }
+
+    .op .fields {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+    }
+
+    .op label {
+      display: block;
+      font-size: 13px;
+      color: var(--text-2);
+      margin-bottom: 6px;
+    }
+
+    .op label .unit {
+      opacity: .7;
+    }
+
+    .op input {
+      width: 100%;
+      padding: 11px 13px;
+      font: inherit;
+      font-size: 15px;
+      font-variant-numeric: tabular-nums;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text-1);
+    }
+
+    .op input:focus {
+      outline: 2px solid var(--brand);
+      outline-offset: -1px;
+    }
+
+    .op input[aria-invalid="true"] {
+      border-color: var(--bad);
+    }
+
+    .op button {
+      font: inherit;
+      cursor: pointer;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text-1);
+      padding: 11px 18px;
+    }
+
+    .op button.primary {
+      background: var(--brand-deep);
+      border-color: var(--brand-deep);
+      color: var(--bg);
+      font-weight: 700;
+    }
+
+    .op button:disabled {
+      opacity: .5;
+      cursor: default;
+    }
+
+    /* call / put segmented toggle */
+    .op .seg {
+      display: flex;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .op .seg input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .op .seg label {
+      flex: 1;
+      margin: 0;
+      text-align: center;
+      padding: 11px 0;
+      font-size: 15px;
+      cursor: pointer;
+      background: var(--surface-2);
+      color: var(--text-2);
+    }
+
+    .op .seg input:checked+label {
+      background: var(--brand-deep);
+      color: var(--bg);
+      font-weight: 700;
+    }
+
+    .op .seg input:focus-visible+label {
+      outline: 2px solid var(--brand);
+      outline-offset: -2px;
+    }
+
+    .op .actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    .op .hint {
+      font-size: 12.5px;
+      color: var(--text-2);
+      margin: 0;
+    }
+
+    .op .err {
+      color: var(--bad);
+      font-size: 13.5px;
+      margin-top: 12px;
+    }
+
+    .op .hidden {
+      display: none;
+    }
+
+    /* results */
+    .op .price {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .op .price .v {
+      font-size: 34px;
+      font-weight: 700;
+      color: var(--text-1);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .op .price .k {
+      font-size: 13px;
+      color: var(--text-2);
+    }
+
+    .op .greeks {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .op .greek {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+
+    .op .greek .k {
+      font-size: 11px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--text-2);
+      font-weight: 700;
+    }
+
+    .op .greek .v {
+      display: block;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-1);
+      margin-top: 4px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .op .greek .u {
+      display: block;
+      font-size: 12px;
+      color: var(--text-2);
+      margin-top: 2px;
+    }
+
+    @media (max-width: 576px) {
+      .op {
+        padding: 20px 12px 64px;
+      }
+
+      .op h1 {
+        font-size: 22px;
+      }
+
+      .op .actions button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="particles-bg" aria-hidden="true"></canvas>
+
+  <header>
+    <div class="header">
+      <div class="logo">
+        <a href="index.html">
+          <span class="logo_text">> 01010111 01010010</span>
+          <span class="logo_cursor"></span>
+        </a>
+      </div>
+      <input class="nav-toggle" type="checkbox" id="nav-toggle">
+      <label class="nav-burger" for="nav-toggle" aria-label="Menu"></label>
+      <div class="navbar">
+        <a href="codeography.html">Codeography</a>
+        <a href="music.html">Music</a>
+        <a href="legal.html">Legal</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="op">
+      <h1>Options Pricer</h1>
+      <p class="lede">Black-Scholes pricing for European options, with a continuous dividend yield.</p>
+
+      <form class="card" id="form" novalidate>
+        <div class="fields">
+          <div>
+            <label>Option type</label>
+            <div class="seg" role="radiogroup" aria-label="Option type">
+              <input type="radio" name="type" id="t-call" value="call" checked>
+              <label for="t-call">Call</label>
+              <input type="radio" name="type" id="t-put" value="put">
+              <label for="t-put">Put</label>
+            </div>
+          </div>
+          <div>
+            <label for="spot">Spot price <span class="unit">($)</span></label>
+            <input id="spot" type="number" inputmode="decimal" step="any" min="0" value="100.50">
+          </div>
+          <div>
+            <label for="strike">Strike price <span class="unit">($)</span></label>
+            <input id="strike" type="number" inputmode="decimal" step="any" min="0" value="101.50">
+          </div>
+          <div>
+            <label for="days">Time to expiry <span class="unit">(days)</span></label>
+            <input id="days" type="number" inputmode="decimal" step="any" min="0" value="365">
+          </div>
+          <div>
+            <label for="vol">Volatility <span class="unit">(% annual)</span></label>
+            <input id="vol" type="number" inputmode="decimal" step="any" min="0" value="13">
+          </div>
+          <div>
+            <label for="rate">Risk-free rate <span class="unit">(% annual)</span></label>
+            <input id="rate" type="number" inputmode="decimal" step="any" value="4">
+          </div>
+          <div>
+            <label for="div">Dividend yield <span class="unit">(% annual)</span></label>
+            <input id="div" type="number" inputmode="decimal" step="any" value="2">
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="primary" type="submit" id="go">Price option</button>
+          <p class="hint">Rates are continuously compounded. Expiry uses a 365-day year.</p>
+        </div>
+        <div class="err hidden" id="err" role="alert"></div>
+      </form>
+
+      <section id="results" class="hidden" aria-live="polite">
+        <h2>Result</h2>
+        <div class="card">
+          <div class="price">
+            <span class="v" id="r-price"></span>
+            <span class="k" id="r-label"></span>
+          </div>
+          <div class="greeks" id="r-greeks"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="scripts/particles.js" defer></script>
+  <script>
+    // Base URL of the Rust pricing service (~/rust-service). Local dev talks to
+    // `cargo run`; set PROD_API once the service is deployed.
+    const PROD_API = '';
+    const API = ['localhost', '127.0.0.1', ''].includes(location.hostname)
+      ? 'http://127.0.0.1:3000'
+      : PROD_API;
+
+    const $ = id => document.getElementById(id);
+    const form = $('form');
+    const errBox = $('err');
+
+    // [input id, request field, scale, must be positive, display name]
+    const FIELDS = [
+      ['spot', 'spot_price', 1, true, 'Spot price'],
+      ['strike', 'strike_price', 1, true, 'Strike price'],
+      ['days', 'time_to_expiration', 1 / 365, true, 'Time to expiry'],
+      ['vol', 'volatility', 1 / 100, true, 'Volatility'],
+      ['rate', 'risk_free_rate', 1 / 100, false, 'Risk-free rate'],
+      ['div', 'dividend_yield', 1 / 100, false, 'Dividend yield'],
+    ];
+
+    function showError(msg) {
+      errBox.textContent = msg;
+      errBox.classList.toggle('hidden', !msg);
+    }
+
+    function readForm() {
+      const body = { option_type: form.type.value };
+      const problems = [];
+      for (const [id, key, scale, positive, name] of FIELDS) {
+        const el = $(id);
+        const n = el.value.trim() === '' ? NaN : Number(el.value);
+        const bad = !Number.isFinite(n) || (positive && n <= 0);
+        el.setAttribute('aria-invalid', bad);
+        if (bad) problems.push(positive ? `${name} must be greater than 0.` : `${name} must be a number.`);
+        body[key] = n * scale;
+      }
+      return { body, problems };
+    }
+
+    async function price(body) {
+      if (!API) throw new Error('The pricing service is not deployed yet.');
+      let res;
+      try {
+        res = await fetch(`${API}/price`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+      } catch {
+        throw new Error('Could not reach the pricing service. Is it running?');
+      }
+      const text = await res.text();
+      if (!res.ok) {
+        // 422s are either {"error": "..."} or Axum's plain-text message
+        let msg = text;
+        try { msg = JSON.parse(text).error || text; } catch { }
+        throw new Error(msg || `Pricing service returned ${res.status}.`);
+      }
+      return JSON.parse(text);
+    }
+
+    const fmt = (n, d = 4) => n.toLocaleString(undefined, { minimumFractionDigits: d, maximumFractionDigits: d });
+
+    function render(r, type) {
+      $('r-price').textContent = `$${fmt(r.price)}`;
+      $('r-label').textContent = `${type === 'call' ? 'Call' : 'Put'} premium per share`;
+      // The service returns raw partials; rescale to the conventional units.
+      const greeks = [
+        ['Delta', r.delta, 'per $1 in spot'],
+        ['Gamma', r.gamma, 'delta per $1 in spot'],
+        ['Theta', r.theta / 365, 'per calendar day'],
+        ['Vega', r.vega / 100, 'per 1 vol point'],
+        ['Rho', r.rho / 100, 'per 1% in rate'],
+      ];
+      $('r-greeks').innerHTML = greeks.map(([k, v, u]) =>
+        `<div class="greek"><span class="k">${k}</span><span class="v">${fmt(v)}</span><span class="u">${u}</span></div>`
+      ).join('');
+      $('results').classList.remove('hidden');
+    }
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const { body, problems } = readForm();
+      if (problems.length) return showError(problems.join(' '));
+
+      showError('');
+      const btn = $('go');
+      btn.disabled = true;
+      btn.textContent = 'Pricing…';
+      try {
+        render(await price(body), body.option_type);
+      } catch (err) {
+        showError(err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Price option';
+      }
+    });
+  </script>
+</body>
+
+</html>

@@ -1,145 +1,423 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8"/>
-  <title>Song Graph 3D</title>
+  <title>Song Graph - Winston Riggs</title>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Interactive 3D graph of songs clustered by audio features. Drag, zoom and click clusters to explore.">
+  <meta name="author" content="Winston Riggs">
+
+  <link rel="stylesheet" href="styles/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+
   <script type="importmap">
   {"imports": {"three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"}}
   </script>
+
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #0f0f1a; overflow: hidden; font-family: sans-serif; }
+    /* The graph fills the viewport below the site header. */
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+      overflow: hidden;
+    }
+
+    #stage,
+    #stage *,
+    #stage *::before,
+    #stage *::after,
+    #yt-modal,
+    #yt-modal * {
+      box-sizing: border-box;
+    }
+
+    #stage {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    #stage canvas {
+      display: block;
+    }
+
+    #stage input,
+    #yt-modal input {
+      font: inherit;
+      font-size: 13px;
+      padding: 8px 11px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text-1);
+    }
+
+    #stage input:focus,
+    #yt-modal input:focus {
+      outline: 2px solid var(--brand);
+      outline-offset: -1px;
+    }
+
+    #stage button,
+    #yt-modal button {
+      font: inherit;
+      font-size: 13px;
+      cursor: pointer;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text-1);
+      padding: 8px 14px;
+    }
+
+    #stage button.primary,
+    #yt-modal button.primary {
+      background: var(--brand-deep);
+      border-color: var(--brand-deep);
+      color: var(--bg);
+      font-weight: 700;
+    }
+
+    .panel {
+      background: rgba(22, 29, 36, 0.88);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
     #ui {
-      position: fixed; top: 12px; right: 12px; z-index: 10;
-      display: flex; gap: 6px;
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      z-index: 10;
+      display: flex;
+      gap: 6px;
+      padding: 8px;
     }
-    input {
-      padding: 6px 10px; border-radius: 6px; border: 1px solid #444;
-      background: #1a1a2e; color: #eee; font-size: 13px; width: 230px;
+
+    #search {
+      width: 230px;
     }
-    button {
-      padding: 6px 12px; border-radius: 6px; border: none;
-      background: #4363d8; color: white; cursor: pointer; font-size: 13px;
-    }
+
     #tooltip {
-      position: fixed; pointer-events: none; display: none;
-      background: rgba(0,0,0,0.82); color: #eee; padding: 6px 10px;
-      border-radius: 6px; font-size: 13px; max-width: 280px;
+      position: fixed;
+      pointer-events: none;
+      display: none;
+      z-index: 30;
+      background: rgba(15, 20, 25, 0.92);
+      border: 1px solid var(--border);
+      color: var(--text-1);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      max-width: 280px;
     }
+
     #legend {
-      position: fixed; bottom: 12px; left: 12px; z-index: 10;
-      background: rgba(0,0,0,0.55); padding: 8px 12px; border-radius: 8px;
-      color: #ccc; font-size: 11px; max-height: 260px; overflow-y: auto; width: 180px;
+      position: absolute;
+      bottom: 14px;
+      left: 14px;
+      z-index: 10;
+      padding: 10px 12px;
+      color: var(--text-2);
+      font-size: 12px;
+      max-height: 280px;
+      overflow-y: auto;
+      width: 200px;
     }
+
+    #legend .legend-title {
+      display: block;
+      color: var(--brand);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
     .legend-item {
-      display: flex; align-items: center; gap: 6px; margin: 2px 0;
-      cursor: pointer; border-radius: 4px; padding: 2px 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 1px 0;
+      cursor: pointer;
+      border-radius: 4px;
+      padding: 2px 6px;
     }
-    .legend-item:hover { background: rgba(255,255,255,0.08); }
-    .legend-item.focused { background: rgba(255,255,255,0.15); outline: 1px solid rgba(255,255,255,0.3); }
-    .legend-item.dimmed { opacity: 0.25; }
-    .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-    #reset-btn {
-      display: none; margin-top: 6px; width: 100%; padding: 4px 0;
-      border-radius: 5px; border: 1px solid #555; background: rgba(255,255,255,0.1);
-      color: #eee; cursor: pointer; font-size: 11px;
+
+    .legend-item:hover {
+      background: var(--surface-2);
+      color: var(--text-1);
     }
-    #reset-btn:hover { background: rgba(255,255,255,0.2); }
+
+    .legend-item.focused {
+      background: var(--surface-2);
+      color: var(--text-1);
+      outline: 1px solid var(--brand);
+    }
+
+    .legend-item.dimmed {
+      opacity: 0.35;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    #stage #reset-btn {
+      display: none;
+      margin-top: 8px;
+      width: 100%;
+      padding: 6px 0;
+      font-size: 12px;
+    }
+
     #hint {
-      position: fixed; bottom: 12px; right: 12px; color: #555; font-size: 11px; z-index: 10;
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+      color: var(--text-2);
+      opacity: .7;
+      font-size: 12px;
+      z-index: 10;
     }
+
     #song-panel {
-      position: fixed; top: 0; right: -320px; width: 300px; height: 100vh;
-      background: rgba(15,15,30,0.95); border-left: 1px solid #2a2a4a;
-      z-index: 20; display: flex; flex-direction: column;
+      position: absolute;
+      top: 0;
+      right: -340px;
+      width: 320px;
+      max-width: 100%;
+      height: 100%;
+      background: rgba(22, 29, 36, 0.96);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-left: 1px solid var(--border);
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
       transition: right 0.25s ease;
     }
-    #song-panel.open { right: 0; }
+
+    #song-panel.open {
+      right: 0;
+    }
+
     #panel-header {
-      padding: 14px 16px 10px; border-bottom: 1px solid #2a2a4a;
-      display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
     }
-    #panel-title { color: #eee; font-size: 14px; font-weight: 600; }
-    #panel-close {
-      background: none; border: none; color: #888; font-size: 18px;
-      cursor: pointer; padding: 0 4px; line-height: 1;
+
+    #panel-title {
+      color: var(--brand);
+      font-size: 14px;
+      font-weight: 700;
     }
-    #panel-close:hover { color: #eee; }
+
+    #stage #panel-close {
+      background: none;
+      border: none;
+      color: var(--text-2);
+      font-size: 18px;
+      padding: 0 4px;
+      line-height: 1;
+    }
+
+    #stage #panel-close:hover {
+      color: var(--text-1);
+    }
+
     #panel-search {
-      padding: 8px 12px; border-bottom: 1px solid #1e1e3a; flex-shrink: 0;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
     }
+
     #panel-search input {
-      width: 100%; padding: 5px 8px; border-radius: 5px; border: 1px solid #333;
-      background: #1a1a2e; color: #eee; font-size: 12px;
+      width: 100%;
+      font-size: 12px;
+      padding: 6px 9px;
     }
+
     #song-list {
-      overflow-y: auto; flex: 1; padding: 6px 0;
+      overflow-y: auto;
+      flex: 1;
+      padding: 6px 0;
     }
+
     .song-row {
-      padding: 5px 10px 5px 16px; font-size: 12px; color: #ccc;
-      border-bottom: 1px solid #1a1a2e;
-      display: flex; align-items: center; gap: 6px;
+      padding: 5px 10px 5px 16px;
+      font-size: 12.5px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-    .song-row:hover { background: rgba(255,255,255,0.05); }
+
+    .song-row:hover {
+      background: var(--surface-2);
+    }
+
     .song-name {
-      flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-      cursor: pointer; color: #ccc;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      cursor: pointer;
+      color: var(--text-2);
     }
-    .song-name:hover { color: #fff; text-decoration: underline; }
-    .song-name.has-link { color: #ff4444; }
-    .song-name.has-link:hover { color: #ff6666; }
+
+    .song-name:hover {
+      color: var(--brand);
+      text-decoration: underline;
+    }
+
+    .song-name.has-link {
+      color: var(--accent);
+    }
+
+    .song-name.has-link:hover {
+      color: var(--accent-warm);
+    }
+
     #yt-modal {
-      display: none; position: fixed; inset: 0; z-index: 100;
-      background: rgba(0,0,0,0.7); align-items: center; justify-content: center;
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(0, 0, 0, 0.7);
+      align-items: center;
+      justify-content: center;
     }
-    #yt-modal.open { display: flex; }
+
+    #yt-modal.open {
+      display: flex;
+    }
+
     #yt-modal-box {
-      background: #1a1a2e; border: 1px solid #333; border-radius: 10px;
-      padding: 20px; width: 420px; max-width: 90vw;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      width: 420px;
+      max-width: 90vw;
     }
-    #yt-modal-title { color: #eee; font-size: 13px; margin-bottom: 12px; font-weight: 600; }
+
+    #yt-modal-title {
+      color: var(--text-1);
+      font-size: 14px;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
     #yt-modal-input {
-      width: 100%; padding: 7px 10px; border-radius: 6px; border: 1px solid #444;
-      background: #0f0f1a; color: #eee; font-size: 13px; margin-bottom: 12px;
+      width: 100%;
+      margin-bottom: 12px;
     }
-    #yt-modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
-    #yt-modal-actions button { font-size: 12px; padding: 5px 14px; }
-    #yt-clear { background: #5a1a1a; }
-    #yt-clear:hover { background: #7a2a2a; }
-    #yt-save { background: #1a3a6a; }
-    #yt-save:hover { background: #2a4a8a; }
-    #yt-cancel { background: #333; }
-    #yt-cancel:hover { background: #444; }
+
+    #yt-modal-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    #yt-modal #yt-clear {
+      color: #ff6b6b;
+    }
+
+    @media (max-width: 576px) {
+      #ui {
+        top: 10px;
+        left: 10px;
+        right: 10px;
+      }
+
+      #search {
+        flex: 1;
+        min-width: 0;
+        width: auto;
+      }
+
+      #legend {
+        bottom: 10px;
+        left: 10px;
+        width: 170px;
+        max-height: 40%;
+      }
+
+      #hint {
+        display: none;
+      }
+    }
   </style>
 </head>
-<body>
-<div id="ui">
-  <input id="search" type="text" placeholder="Search song..." />
-  <button onclick="doSearch()">Find</button>
-</div>
-<div id="tooltip"></div>
-<div id="legend"></div>
-<div id="hint">Drag to rotate · Scroll to zoom · Right-drag to pan</div>
-<div id="song-panel">
-  <div id="panel-header">
-    <span id="panel-title">Cluster</span>
-    <button id="panel-close" onclick="focusCluster(null)">&#x2715;</button>
-  </div>
-  <div id="panel-search"><input id="panel-filter" type="text" placeholder="Filter songs..." /></div>
-  <div id="song-list"></div>
-</div>
 
-<div id="yt-modal">
-  <div id="yt-modal-box">
-    <div id="yt-modal-title"></div>
-    <input id="yt-modal-input" type="text" placeholder="Paste YouTube URL..." />
-    <div id="yt-modal-actions">
-      <button id="yt-clear">Clear</button>
-      <button id="yt-cancel">Cancel</button>
-      <button id="yt-save">Save</button>
+<body>
+  <header>
+    <div class="header">
+      <div class="logo">
+        <a href="index.html">
+          <span class="logo_text">> 01010111 01010010</span>
+          <span class="logo_cursor"></span>
+        </a>
+      </div>
+      <input class="nav-toggle" type="checkbox" id="nav-toggle">
+      <label class="nav-burger" for="nav-toggle" aria-label="Menu"></label>
+      <div class="navbar">
+        <a href="codeography.html">Codeography</a>
+        <a href="music.html">Music</a>
+        <a href="legal.html">Legal</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="stage">
+    <div id="ui" class="panel">
+      <input id="search" type="text" placeholder="Search song..." aria-label="Search song">
+      <button class="primary" id="search-btn">Find</button>
+    </div>
+    <div id="legend" class="panel"></div>
+    <div id="hint">Drag to rotate · Scroll to zoom · Right-drag to pan</div>
+    <div id="song-panel">
+      <div id="panel-header">
+        <span id="panel-title">Cluster</span>
+        <button id="panel-close" aria-label="Close">&#x2715;</button>
+      </div>
+      <div id="panel-search"><input id="panel-filter" type="text" placeholder="Filter songs..." aria-label="Filter songs"></div>
+      <div id="song-list"></div>
+    </div>
+  </main>
+  <div id="tooltip"></div>
+
+  <div id="yt-modal">
+    <div id="yt-modal-box">
+      <div id="yt-modal-title"></div>
+      <input id="yt-modal-input" type="text" placeholder="Paste YouTube URL...">
+      <div id="yt-modal-actions">
+        <button id="yt-clear">Clear</button>
+        <button id="yt-cancel">Cancel</button>
+        <button class="primary" id="yt-save">Save</button>
+      </div>
     </div>
   </div>
-</div>
 
 <script type="module">
 import * as THREE from 'three';
@@ -152,23 +430,25 @@ const CLUSTER_COLORS = {"0": "#e6194b", "1": "#3cb44b", "2": "#ffe119", "3": "#4
 // ── Three.js setup ──────────────────────────────────────────────
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setClearColor(0x0f0f1a);
-document.body.appendChild(renderer.domElement);
+const stage = document.getElementById("stage");
+renderer.setSize(stage.clientWidth, stage.clientHeight);
+renderer.setClearColor(0x0f1419);
+stage.prepend(renderer.domElement);
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.01, 1000);
+const camera = new THREE.PerspectiveCamera(60, stage.clientWidth / stage.clientHeight, 0.01, 1000);
 camera.position.set(0, 0, 30);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.08;
 
-window.addEventListener("resize", () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
+// The stage also resizes when the mobile nav or browser chrome changes height.
+new ResizeObserver(() => {
+  camera.aspect = stage.clientWidth / stage.clientHeight;
   camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
+  renderer.setSize(stage.clientWidth, stage.clientHeight);
+}).observe(stage);
 
 // ── Normalize coords to [-10, 10] ──────────────────────────────
 const xs = RAW_NODES.map(n => n.x), ys = RAW_NODES.map(n => n.y), zs = RAW_NODES.map(n => n.z);
@@ -370,8 +650,9 @@ let hoveredIdx = null;
 const highlightColor = new THREE.Color(0xffffff);
 
 function onMouseMove(e) {
-  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  const rect = renderer.domElement.getBoundingClientRect();
+  mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+  mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
   raycaster.setFromCamera(mouse, camera);
   const hits = raycaster.intersectObject(instancedMesh);
   const hit = hits.length ? hits[0] : null;
@@ -415,7 +696,7 @@ const counts = {};
 RAW_NODES.forEach(n => counts[n.cluster] = (counts[n.cluster] || 0) + 1);
 
 const legend = document.getElementById("legend");
-legend.innerHTML = "<b style='font-size:12px'>Clusters</b>";
+legend.innerHTML = "<span class='legend-title'>Clusters</span>";
 CLUSTER_IDS.forEach(cid => {
   const div = document.createElement("div");
   div.className = "legend-item";
@@ -449,9 +730,14 @@ function doSearch() {
   instancedMesh.setColorAt(found.id, highlightColor);
   instancedMesh.instanceColor.needsUpdate = true;
   tooltip.style.display = "block";
-  tooltip.style.left = "50%"; tooltip.style.top = "20px";
+  const r = stage.getBoundingClientRect();
+  tooltip.style.left = (r.left + r.width / 2) + "px"; tooltip.style.top = (r.top + 76) + "px";
   tooltip.textContent = found.label + " · Cluster " + found.cluster;
 }
+
+// Inline onclick can't reach module-scoped functions, so wire buttons here.
+document.getElementById("search-btn").addEventListener("click", doSearch);
+document.getElementById("panel-close").addEventListener("click", () => focusCluster(null));
 
 document.getElementById("search").addEventListener("keydown", e => {
   if (e.key === "Enter") doSearch();
