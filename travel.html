@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Travel - Winston Riggs</title>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Interactive globe of the countries I've visited.">
+  <meta name="author" content="Winston Riggs">
+
+  <link rel="stylesheet" href="styles/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+
+  <style>
+    .tr,
+    .tr *,
+    .tr *::before,
+    .tr *::after {
+      box-sizing: border-box;
+    }
+
+    .tr {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+    }
+
+    .tr h2 {
+      font-size: 17px;
+      margin: 32px 0 12px;
+      color: var(--brand);
+    }
+
+    .tr .lede {
+      color: var(--text-2);
+      margin: 0 0 20px;
+      font-size: 14px;
+    }
+
+    .tr .card {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+    }
+
+    .tr .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .tr .stat {
+      flex: 1 1 140px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+    }
+
+    .tr .stat .v {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1.2;
+    }
+
+    .tr .stat .k {
+      font-size: 12px;
+      color: var(--text-2);
+    }
+
+    .tr .globe-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 560px;
+      aspect-ratio: 1;
+      margin: 0 auto;
+    }
+
+    .tr canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: grab;
+      touch-action: none;
+    }
+
+    .tr canvas.dragging {
+      cursor: grabbing;
+    }
+
+    .tr .loading {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: var(--text-2);
+      font-size: 14px;
+    }
+
+    .tr .tip {
+      position: absolute;
+      pointer-events: none;
+      background: rgba(15, 20, 25, 0.92);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 13px;
+      white-space: nowrap;
+      transform: translate(-50%, calc(-100% - 12px));
+      opacity: 0;
+      transition: opacity 0.12s;
+    }
+
+    .tr .tip.on {
+      opacity: 1;
+    }
+
+    .tr .tip .yes {
+      color: var(--accent);
+    }
+
+    .tr .hint {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-2);
+      margin: 8px 0 0;
+    }
+
+    .tr .chips {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tr .chips button {
+      font: inherit;
+      font-size: 13px;
+      color: var(--text-1);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tr .chips button:hover,
+    .tr .chips button:focus-visible,
+    .tr .chips button.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(255, 183, 3, 0.08);
+      outline: none;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="particles-bg" aria-hidden="true"></canvas>
+
+  <header>
+    <div class="header">
+      <div class="logo">
+        <a href="index.html">
+          <span class="logo_text">> 01010111 01010010</span>
+          <span class="logo_cursor"></span>
+        </a>
+      </div>
+      <input class="nav-toggle" type="checkbox" id="nav-toggle">
+      <label class="nav-burger" for="nav-toggle" aria-label="Menu"></label>
+      <div class="navbar">
+        <a href="codeography.html">Codeography</a>
+        <a href="music.html">Music</a>
+        <a href="legal.html">Legal</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="tr">
+      <h2>Where I've Been</h2>
+
+      <div class="card">
+        <div class="stats">
+          <div class="stat">
+            <div class="v" id="stat-count">–</div>
+            <div class="k">countries visited</div>
+          </div>
+          <div class="stat">
+            <div class="v" id="stat-pct">–</div>
+            <div class="k">of the world's countries</div>
+          </div>
+        </div>
+
+        <div class="globe-wrap" id="globe-wrap">
+          <canvas id="globe" role="img" aria-label="Globe highlighting countries visited"></canvas>
+          <div class="loading" id="loading">Loading map…</div>
+          <div class="tip" id="tip"></div>
+        </div>
+        <p class="hint">drag to rotate · scroll to zoom</p>
+      </div>
+
+      <h2>Countries</h2>
+      <ul class="chips" id="chips"></ul>
+    </div>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+  <script src="scripts/particles.js" defer></script>
+  <script>
+    // ── Countries visited ────────────────────────────────────────────
+    // Edit this list. Names must match the Natural Earth names used by
+    // world-atlas (e.g. "United States of America", "United Kingdom",
+    // "Czechia", "Dominican Rep."). Unmatched names are logged to the console.
+    const VISITED = [
+      "United States of America",
+      "Canada",
+      "United Kingdom",
+      "France",
+      "Spain",
+      "Belgium",
+      "Netherlands",
+      "Germany",
+      "Switzerland",
+      "Italy",
+      "Greece",
+      "Poland",
+      "Ukraine",
+      "Czechia",
+      "Hungary",
+    ];
+
+    // 50m for crisp detail at rest; 110m (~5x fewer points) while the globe moves
+    const WORLD_HI = "https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json";
+    const WORLD_LO = "https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json";
+
+    const css = getComputedStyle(document.documentElement);
+    const C = {
+      ocean: css.getPropertyValue("--surface-2").trim() || "#1d2831",
+      land: "#2b3a45",
+      border: css.getPropertyValue("--bg").trim() || "#0f1419",
+      visited: css.getPropertyValue("--accent").trim() || "#ffb703",
+      visitedHover: "#ffd166",
+      hover: "#3d5363",
+      rim: css.getPropertyValue("--brand").trim() || "#8ecae6",
+      grid: "rgba(142, 202, 230, 0.08)",
+    };
+
+    const wrap = document.getElementById("globe-wrap");
+    const canvas = document.getElementById("globe");
+    const ctx = canvas.getContext("2d");
+    const tip = document.getElementById("tip");
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const projection = d3.geoOrthographic();
+    const path = d3.geoPath(projection, ctx);
+    const graticule = d3.geoGraticule10();
+    const SPHERE = { type: "Sphere" };
+
+    // per-resolution geometry: { land, borders, visited: [features] }
+    let hi = null, lo = null;
+    let countries = [];          // 50m features (hover + fly-to)
+    let bounds = new Map();      // feature -> [[w,s],[e,n]] for cheap hover prefilter
+    let visitedSet = new Set();
+    let visitedLoByName = new Map();
+    let hovered = null;
+    let size = 0, dpr = 1;
+    let zoom = 1;
+    let autoSpin = !reduceMotion;
+    let flyTimer = null;
+
+    // ── Rendering ────────────────────────────────────────────────────
+    // The glowing ocean disc is pre-rendered; shadowBlur every frame is very slow.
+    const disc = document.createElement("canvas");
+    let discScale = -1;
+    function renderDisc() {
+      const r = projection.scale(), pad = 30;
+      const d = Math.ceil((r + pad) * 2);
+      disc.width = d * dpr; disc.height = d * dpr;
+      const c = disc.getContext("2d");
+      c.setTransform(dpr, 0, 0, dpr, 0, 0);
+      c.shadowColor = "rgba(142, 202, 230, 0.35)";
+      c.shadowBlur = 24;
+      c.beginPath(); c.arc(d / 2, d / 2, r, 0, 2 * Math.PI);
+      c.fillStyle = C.ocean; c.fill();
+      discScale = r;
+    }
+
+    let moving = false, settleTimer = null, frame = 0;
+    function markMoving() {
+      moving = true;
+      clearTimeout(settleTimer);
+      settleTimer = setTimeout(() => { moving = false; requestDraw(); }, 180);
+    }
+
+    function requestDraw() {
+      if (!frame) frame = requestAnimationFrame(() => { frame = 0; draw(); });
+    }
+
+    function draw() {
+      if (!size || !hi) return;
+      const g = moving || autoSpin ? lo : hi;
+      projection.precision(g === lo ? 1.5 : 0.5);
+      ctx.clearRect(0, 0, size, size);
+
+      const r = projection.scale();
+      if (r >= size) {
+        ctx.fillStyle = C.ocean; ctx.fillRect(0, 0, size, size);
+      } else if (r !== discScale && g === lo) {
+        // size is animating (zoom / fly-to): skip the glow until it settles
+        ctx.beginPath(); path(SPHERE); ctx.fillStyle = C.ocean; ctx.fill();
+      } else {
+        if (r !== discScale) renderDisc();
+        const d = disc.width / dpr;
+        ctx.drawImage(disc, size / 2 - d / 2, size / 2 - d / 2, d, d);
+      }
+
+      ctx.beginPath(); path(graticule);
+      ctx.strokeStyle = C.grid; ctx.lineWidth = 1; ctx.stroke();
+
+      ctx.beginPath(); path(g.land);
+      ctx.fillStyle = C.land; ctx.fill();
+
+      if (hovered && !visitedSet.has(hovered)) {
+        ctx.beginPath(); path(hovered);
+        ctx.fillStyle = C.hover; ctx.fill();
+      }
+
+      ctx.beginPath();
+      for (const f of g.visited) path(f);
+      ctx.fillStyle = C.visited; ctx.fill();
+
+      if (hovered && visitedSet.has(hovered)) {
+        ctx.beginPath(); path(hovered);
+        ctx.fillStyle = C.visitedHover; ctx.fill();
+      }
+
+      ctx.beginPath(); path(g.borders);
+      ctx.strokeStyle = C.border; ctx.lineWidth = 0.6; ctx.stroke();
+
+      ctx.beginPath(); path(SPHERE);
+      ctx.strokeStyle = C.rim; ctx.globalAlpha = 0.5; ctx.lineWidth = 1; ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+
+    function resize() {
+      dpr = window.devicePixelRatio || 1;
+      size = wrap.clientWidth;
+      canvas.width = size * dpr;
+      canvas.height = size * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      projection.translate([size / 2, size / 2]).scale((size / 2 - 4) * zoom);
+      discScale = -1;
+      draw();
+    }
+
+    // ── Interaction ──────────────────────────────────────────────────
+    function countryAt(x, y) {
+      const p = projection.invert([x, y]);
+      const [rl, rp] = projection.rotate();
+      if (!p || d3.geoDistance(p, [-rl, -rp]) > Math.PI / 2) return null;
+      const [lon, lat] = p;
+      for (const f of countries) {
+        const [[w, s], [e, n]] = bounds.get(f);
+        if (lat < s || lat > n) continue;
+        if (w <= e ? (lon < w || lon > e) : (lon < w && lon > e)) continue;
+        if (d3.geoContains(f, p)) return f;
+      }
+      return null;
+    }
+
+    function setHover(f, x, y) {
+      if (f !== hovered) { hovered = f; requestDraw(); }
+      if (!f) { tip.classList.remove("on"); return; }
+      tip.innerHTML = visitedSet.has(f)
+        ? `${f.properties.name} <span class="yes">✓</span>`
+        : f.properties.name;
+      tip.style.left = x + "px";
+      tip.style.top = y + "px";
+      tip.classList.add("on");
+    }
+
+    function stopSpin() {
+      autoSpin = false;
+      if (flyTimer) { flyTimer.stop(); flyTimer = null; }
+    }
+
+    let hoverPending = null;
+    d3.select(canvas)
+      .call(d3.drag()
+        .on("start", () => { stopSpin(); canvas.classList.add("dragging"); setHover(null); })
+        .on("drag", e => {
+          const [l, p, g] = projection.rotate();
+          const k = 75 / projection.scale();
+          projection.rotate([l + e.dx * k, Math.max(-90, Math.min(90, p - e.dy * k)), g]);
+          markMoving(); requestDraw();
+        })
+        .on("end", () => canvas.classList.remove("dragging")))
+      .on("pointermove", e => {
+        if (canvas.classList.contains("dragging") || e.pointerType === "touch") return;
+        // hit-test at most once per frame
+        const first = !hoverPending;
+        hoverPending = d3.pointer(e);
+        if (first) requestAnimationFrame(() => {
+          const [x, y] = hoverPending; hoverPending = null;
+          if (hi) setHover(countryAt(x, y), x, y);
+        });
+      })
+      .on("pointerleave", () => { hoverPending = null; setHover(null); })
+      .on("wheel", e => {
+        e.preventDefault();
+        zoom = Math.max(0.8, Math.min(8, zoom * Math.exp(-e.deltaY * 0.0015)));
+        projection.scale((size / 2 - 4) * zoom);
+        markMoving(); requestDraw();
+      }, { passive: false });
+
+    function flyTo(f) {
+      stopSpin();
+      const [lon, lat] = d3.geoCentroid(f);
+      const from = projection.rotate();
+      const to = [-lon, -lat, 0];
+      // take the short way round in longitude
+      to[0] = from[0] + ((((to[0] - from[0]) % 360) + 540) % 360 - 180);
+      const interp = d3.interpolate(from, to);
+      const zFrom = zoom;
+      const zTo = Math.max(1, Math.min(4, 60 / Math.sqrt(d3.geoArea(f) * 4000)));
+      const dur = reduceMotion ? 0 : 1100;
+      hovered = f;
+      flyTimer = d3.timer(elapsed => {
+        const t = dur ? d3.easeCubicInOut(Math.min(1, elapsed / dur)) : 1;
+        projection.rotate(interp(t));
+        zoom = zFrom + (zTo - zFrom) * t;
+        projection.scale((size / 2 - 4) * zoom);
+        markMoving(); draw();
+        if (t >= 1) { flyTimer.stop(); flyTimer = null; }
+      });
+    }
+
+    // ── Load ─────────────────────────────────────────────────────────
+    function prep(world, visitedNames) {
+      const feats = topojson.feature(world, world.objects.countries).features
+        .filter(f => f.properties && f.properties.name);
+      return {
+        feats,
+        land: topojson.feature(world, world.objects.land),
+        borders: topojson.mesh(world, world.objects.countries, (a, b) => a !== b),
+        visited: feats.filter(f => visitedNames.has(f.properties.name)),
+      };
+    }
+
+    Promise.all([WORLD_HI, WORLD_LO].map(u => fetch(u).then(r => r.json())))
+      .then(([worldHi, worldLo]) => {
+        const names = new Set(VISITED);
+        hi = prep(worldHi, names);
+        lo = prep(worldLo, names);
+        countries = hi.feats;
+        for (const f of countries) bounds.set(f, d3.geoBounds(f));
+        visitedSet = new Set(hi.visited);
+
+        // small countries missing from 110m fall back to their 50m shape while moving
+        const loNames = new Set(lo.visited.map(f => f.properties.name));
+        lo.visited.push(...hi.visited.filter(f => !loNames.has(f.properties.name)));
+
+        const byName = new Map(countries.map(f => [f.properties.name, f]));
+        for (const n of VISITED)
+          if (!byName.has(n)) console.warn(`[travel] no country named "${n}" in world-atlas`);
+        const matched = [...hi.visited]
+          .sort((a, b) => a.properties.name.localeCompare(b.properties.name));
+
+        document.getElementById("stat-count").textContent = matched.length;
+        document.getElementById("stat-pct").textContent =
+          Math.round((matched.length / 195) * 100) + "%";
+
+        const chips = document.getElementById("chips");
+        for (const f of matched) {
+          const li = document.createElement("li");
+          const b = document.createElement("button");
+          b.type = "button";
+          b.textContent = f.properties.name;
+          b.addEventListener("click", () => {
+            chips.querySelectorAll("button.active").forEach(x => x.classList.remove("active"));
+            b.classList.add("active");
+            flyTo(f);
+          });
+          li.appendChild(b);
+          chips.appendChild(li);
+        }
+
+        // start facing the first visited country
+        if (matched[0]) {
+          const [lon, lat] = d3.geoCentroid(matched[0]);
+          projection.rotate([-lon, -Math.max(-30, Math.min(30, lat)), 0]);
+        }
+
+        document.getElementById("loading").remove();
+        resize();
+
+        d3.timer(() => {
+          if (!autoSpin) return;
+          const [l, p, g] = projection.rotate();
+          projection.rotate([l + 0.12, p, g]);
+          draw();
+        });
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById("loading").textContent = "Couldn't load the map.";
+      });
+
+    new ResizeObserver(resize).observe(wrap);
+  </script>
+</body>
+
+</html>
